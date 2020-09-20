@@ -7,7 +7,7 @@
 
 (require '[figwheel.main :as figwheel]
          '[clojure.main :as main]
-         #_'[kutyagumi.main.gui :as gui]
+         '[kutyagumi.main.gui :as gui]
          '[kutyagumi.main.nogui :as nogui])
 
 (defmethod task nil
@@ -16,7 +16,7 @@
 
 (defmethod task "native"
   [_]
-  #_(gui/-main))
+  (gui/-main))
 
 (defmethod task "nogui"
   [_]

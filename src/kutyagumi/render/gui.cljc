@@ -12,6 +12,12 @@
 (def *assets (atom {}))
 
 (defn init [game]
+  (gl game enable
+      (gl game BLEND))
+  (gl game blendFunc
+      (gl game SRC_ALPHA)
+      (gl game ONE_MINUS_SRC_ALPHA))
+
   (p/get-edn "assets/assets.edn"
     (fn [assets]
       (doseq [[k {:keys    [image]
@@ -115,7 +121,26 @@
               pipeline
               (->> (c/render game))))))))
 
-(defn render [game board]
+(def color->background
+  {:red   [(/ 224 255)
+           (/ 161 255)
+           (/ 161 255)
+           1]
+   :green [(/ 193 255)
+           (/ 224 255)
+           (/ 161 255)
+           1]})
+
+(defn render [game {:keys [board player]
+                    :as _state}]
+  (c/render game
+            {:viewport {:x      0
+                        :y      0
+                        :width  (p/get-width game)
+                        :height (p/get-height game)}
+             :clear    {:color (color->background player)
+                        :depth 1}})
+
   (doseq [x (-> board count range)
           y (-> board first count range)]
     (draw (u/nd-nth board x y)
