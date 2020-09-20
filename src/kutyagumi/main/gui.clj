@@ -1,8 +1,10 @@
 (ns kutyagumi.main.gui
   (:require [kutyagumi.main.core :as core]
             [play-cljc.gl.core :as pc])
-  (:import (org.lwjgl.glfw GLFW Callbacks
-                           GLFWWindowCloseCallbackI)
+  (:import (org.lwjgl.glfw GLFW
+                           Callbacks
+                           GLFWWindowCloseCallbackI
+                           GLFWMouseButtonCallbackI)
            (org.lwjgl.opengl GL GL33))
   (:gen-class))
 
@@ -26,12 +28,16 @@
 
 (defn start [game {:keys [handle]}]
   (let [game (assoc game :delta-time 0, :total-time (GLFW/glfwGetTime))]
-    (GLFW/glfwShowWindow handle)
-    (GLFW/glfwSetWindowCloseCallback
-      handle
-      (reify GLFWWindowCloseCallbackI
-        (invoke [_ _]
-          (System/exit 0))))
+    (doto handle
+      (GLFW/glfwShowWindow)
+      (GLFW/glfwSetWindowCloseCallback
+        (reify GLFWWindowCloseCallbackI
+          (invoke [_ _]
+            (System/exit 0))))
+      (GLFW/glfwSetMouseButtonCallback
+        (reify GLFWMouseButtonCallbackI
+          (invoke [_ _ button action mods]
+            ))))
     (loop [{last-time :total-time
             :as game} game
            state (core/init game)]
