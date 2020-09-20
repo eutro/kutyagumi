@@ -5,36 +5,59 @@
   #?(:clj (:import (kutyagumi.logic.board LivingCell Wall))))
 
 (defprotocol TextRenderable
-  (render-as-text [this] "Render this as a 2x2 of characters."))
+  (render-as-text [this]
+    "Render this as a 2x2 of characters."))
+
+(def CELL_SIZE 2)
+
+(defn char-or [a b]
+  (if (= \space a) b a))
+
+(defn string-or [a b]
+  (apply str (map char-or
+                  a, b)))
+
+(defn grid-or [a b]
+  (vec (map string-or
+            a, b)))
 
 (extend-protocol TextRenderable
   nil (render-as-text [_] ["  "
                            "  "])
   LivingCell
-  (render-as-text [this]
-    ({:red   ["RR"
-              "RR"]
-      :green ["GG"
-              "GG"]}
-     (:owner this)))
+  (render-as-text [{:keys [owner previous]}]
+    (grid-or
+      (render-as-text previous)
+      ({:red   ["RR"
+                "RR"]
+        :green ["GG"
+                "GG"]}
+       owner)))
   Wall
-  (render-as-text [this]
-    (let [f (fn [ud-side lr-side if-both]
-              (let [has-ud (contains? (:sides this) ud-side)
-                    has-lr (contains? (:sides this) lr-side)]
-                (cond (and has-ud has-lr) if-both
-                      has-ud \-
-                      has-lr \|
-                      :else \space)))]
-      [(str (f :up :left \#)
-            (f :up :right \#))
-       (str (f :down :left \#)
-            (f :down :right \#))])))
+  (render-as-text [{:keys [sides]}]
+    [(str (-> :up sides (if "-" " "))
+          (-> :right sides (if "|" " ")))
+     (str (-> :left sides (if "|" " "))
+          (-> :down sides (if "-" " ")))]))
+
+(defn pad-left
+  ([obj n] (pad-left obj n \space))
+  ([obj n char]
+   (str (apply str (repeat (->> obj str count (- n)) char))
+        obj)))
 
 (defn render [board]
   (doseq [printable-row
-          (mapcat (fn [row]
-                    (apply map str
-                           (map render-as-text row)))
-                  (u/transpose board))]
+          (let [blank (apply str (repeat CELL_SIZE \space))]
+            (concat (apply map (partial str blank " ")
+                           (map #((if (even? %) identity reverse)
+                                  [blank (pad-left % CELL_SIZE)])
+                                (-> board count range)))
+                    (map #(str (if (even? %1)
+                                 (pad-left (quot %1 2) CELL_SIZE)
+                                 blank)
+                               " " %2)
+                         (range)
+                         (mapcat #(apply map str (map render-as-text %))
+                                 (u/transpose board)))))]
     (println printable-row)))

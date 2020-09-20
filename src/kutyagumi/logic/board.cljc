@@ -31,7 +31,7 @@
 (defrecord Wall [sides]
   BoardPart
   (check-placement [_ [x y] {:keys [player board]}]
-    (some (fn [side [dx dy]]
+    (some (fn [[side [dx dy]]]
             (let [cx (+ x dx)
                   cy (+ y dy)]
               (and (owned-by? board cx cy player)
