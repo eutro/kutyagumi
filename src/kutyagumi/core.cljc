@@ -3,7 +3,7 @@
             [play-cljc.gl.core :as c]
             [kutyagumi.render.gui :as gui]
             [kutyagumi.render.core :as render]
-            [kutyagumi.test.map-reader :as mr]
+            [kutyagumi.misc.map-reader :as mr]
             #?(:clj  [play-cljc.macros-java :refer [gl math]]
                :cljs [play-cljc.macros-js :refer-macros [gl math]])))
 

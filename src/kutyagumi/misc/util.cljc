@@ -34,3 +34,7 @@
            (first args)
            nd-update
            (next args))))
+
+(defn transpose [m]
+  "Transpose a 2D matrix."
+  (apply mapv vector m))
