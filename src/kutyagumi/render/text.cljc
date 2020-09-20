@@ -35,7 +35,7 @@
 
 (deftype TextRenderer []
   BoardRenderer
-  (render [_ board _game]
+  (render [_ board]
     (doseq [printable-row
             (mapcat #(apply map str
                             (map render-as-text %))

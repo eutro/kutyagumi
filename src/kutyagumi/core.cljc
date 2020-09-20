@@ -1,18 +1,13 @@
 (ns kutyagumi.core
   (:require [kutyagumi.misc.platform :as p]
             [play-cljc.gl.core :as c]
+            [kutyagumi.logic.game.core :as game]
             [kutyagumi.render.gui :as gui]
             [kutyagumi.render.core :as render]
             [kutyagumi.misc.map-reader :as mr]
+            [clojure.core.async :as async]
             #?(:clj  [play-cljc.macros-java :refer [gl math]]
                :cljs [play-cljc.macros-js :refer-macros [gl math]])))
-
-(def grid-width 9)
-(def grid-height 16)
-
-(defonce board (vec (for [_ (range grid-width)]
-                      (vec (for [_ (range grid-height)]
-                             (atom nil))))))
 
 (defonce *state (atom {}))
 
@@ -24,12 +19,14 @@
       (gl game ONE_MINUS_SRC_ALPHA))
 
   (gui/init game)
-  (reset! render/*renderer (gui/->GuiRenderer)))
+  (reset! render/*renderer (gui/->GuiRenderer game)))
 
 (def test-board
   (atom nil))
 
 (mr/read-file "test.board.edn" (partial reset! test-board))
+
+(def logic (atom nil))
 
 (defn tick [game]
   (let [game-width (p/get-width game)
@@ -44,5 +41,7 @@
                                   (/ 230 255)
                                   1]
                           :depth 1}})
-    (render/render @render/*renderer @test-board game))
+    (when-some [l @logic]
+      (swap! render/*renderer assoc :game game)
+      (render/render @render/*renderer (-> l game/get-state :board))))
   game)

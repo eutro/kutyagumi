@@ -117,9 +117,9 @@
               pipeline
               (->> (c/render game))))))))
 
-(deftype GuiRenderer []
+(defrecord GuiRenderer [game]
   BoardRenderer
-  (render [_ board game]
+  (render [_ board]
     (doseq [x (-> board count range)
             y (-> board first count range)]
       (draw (u/nd-nth board x y)
