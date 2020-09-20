@@ -6,7 +6,7 @@
            (java.util.regex Pattern Matcher)))
 
 (defn parse-line [^String line]
-  (let [matcher (->> line (.matcher #"(\d+) (\d+)"))]
+  (let [matcher (->> line (.matcher #"(\d+)[ :/](\d+)"))]
     (when (.matches matcher)
       [(Integer/parseInt (.group matcher 1))
        (Integer/parseInt (.group matcher 2))])))
@@ -22,12 +22,13 @@
   Player
   (next_move [_]
     (async/thread
-      (with-bindings [*in* in]
+      (binding [*in* in]
         (loop [line (read-line)]
           (if-some [ret (parse-line line)]
             ret
-            (with-bindings [*out* out]
-              (println "Invalid input.")))))))
+            (do (binding [*out* out]
+                  (println "Invalid input."))
+                (recur (read-line))))))))
   (update_state [this new-state]
     (async/to-chan! [(assoc this :state new-state)]))
   Closeable

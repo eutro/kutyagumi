@@ -1,6 +1,5 @@
 (ns kutyagumi.render.gui
-  (:require [kutyagumi.render.core :refer [#?(:cljs BoardRenderer) render]]
-            [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall]])]
+  (:require [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall]])]
             [kutyagumi.misc.util :as u]
             [kutyagumi.misc.platform :as p]
             [play-cljc.gl.core :as c]
@@ -8,8 +7,7 @@
             [play-cljc.transforms :as t]
             #?(:clj  [play-cljc.macros-java :refer [gl math]]
                :cljs [play-cljc.macros-js :refer-macros [gl math]]))
-  #?(:clj (:import (kutyagumi.render.core BoardRenderer)
-                   (kutyagumi.logic.board LivingCell Wall))))
+  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall))))
 
 (def *assets (atom {}))
 
@@ -117,14 +115,12 @@
               pipeline
               (->> (c/render game))))))))
 
-(defrecord GuiRenderer [game]
-  BoardRenderer
-  (render [_ board]
-    (doseq [x (-> board count range)
-            y (-> board first count range)]
-      (draw (u/nd-nth board x y)
-            board, game
-            #(-> %
-                 (t/scale 40 40)
-                 (t/translate (* 7 x (/ 8)) (* 7 y (/ 8))))
-            x, y))))
+(defn render [game board]
+  (doseq [x (-> board count range)
+          y (-> board first count range)]
+    (draw (u/nd-nth board x y)
+          board, game
+          #(-> %
+               (t/scale 40 40)
+               (t/translate (* 7 x (/ 8)) (* 7 y (/ 8))))
+          x, y)))

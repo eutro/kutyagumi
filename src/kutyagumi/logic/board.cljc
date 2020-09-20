@@ -50,18 +50,17 @@
 (defn default-place
   [this x y {:keys [player] :as state}]
   (-> state
-      (u/nd-update state
-                 :board x y
-                 (assoc (->LivingCell player)
-                   :previous this))
-      (update
-        :player
-        (player->next player))))
+      (u/nd-update :board x y
+                   (constantly (-> player
+                                   ->LivingCell
+                                   (assoc :previous this)))
+                   nil)
+      (update :player player->next)))
 
 (extend-protocol BoardPart
   nil
   (check-placement [_ [x y] {:keys [player board]}]
-    (some (fn [dx dy]
+    (some (fn [[dx dy]]
             (owned-by? board
                        (+ x dx)
                        (+ y dy)

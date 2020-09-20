@@ -1,4 +1,4 @@
-(ns kutyagumi.start
+(ns kutyagumi.main.gui
   (:require [kutyagumi.core :as c]
             [play-cljc.gl.core :as pc]
             [goog.events :as events]))
@@ -59,4 +59,3 @@
     (listen-for-resize context)
     (game-loop initial-game)
     context))
-

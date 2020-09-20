@@ -1,10 +1,8 @@
 (ns kutyagumi.render.text
-  (:require [kutyagumi.render.core :refer [#?(:cljs BoardRenderer) render]]
-            [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall]])]
+  (:require [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall]])]
             [kutyagumi.logic.board]
             [kutyagumi.misc.util :as u])
-  #?(:clj (:import (kutyagumi.render.core BoardRenderer)
-                   (kutyagumi.logic.board LivingCell Wall))))
+  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall))))
 
 (defprotocol TextRenderable
   (render-as-text [this] "Render this as a 2x2 of characters."))
@@ -33,11 +31,10 @@
        (str (f :down :left \#)
             (f :down :right \#))])))
 
-(deftype TextRenderer []
-  BoardRenderer
-  (render [_ board]
-    (doseq [printable-row
-            (mapcat #(apply map str
-                            (map render-as-text %))
-                    (u/transpose board))]
-      (println printable-row))))
+(defn render [board]
+  (doseq [printable-row
+          (mapcat (fn [row]
+                    (apply map str
+                           (map render-as-text row)))
+                  (u/transpose board))]
+    (println printable-row)))

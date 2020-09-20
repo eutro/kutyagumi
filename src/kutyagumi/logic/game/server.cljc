@@ -9,10 +9,9 @@
 (defrecord ServerLogic
   [red green state]
   GameLogic
-  (update-game [{:keys [player]
-                 {:keys [board]}
-                       :state
-                 :as   this}]
+  (update-game [{{:keys [board player]}
+                     :state
+                 :as this}]
     (async/go
       (let [[x y]
             (-> this
@@ -24,14 +23,11 @@
         (if (and (not= '__OUT_OF_BOUNDS
                        cell)
                  (board/check-placement cell [x, y] board))
-          (let [new-board
-                (util/nd-update
-                  board, x, y
-                  board/do-placement
-                  [x y] state)
-
-                new-state
-                (assoc state :board new-board)
+          (let [new-state
+                (board/do-placement (util/nd-nth board
+                                                 x, y)
+                                    [x, y]
+                                    state)
 
                 chan
                 (async/merge [(player/update-state red new-state)

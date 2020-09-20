@@ -1,4 +1,4 @@
-(ns kutyagumi.start
+(ns kutyagumi.main.gui
   (:require [kutyagumi.core :as c]
             [play-cljc.gl.core :as pc])
   (:import (org.lwjgl.glfw GLFW Callbacks
@@ -110,7 +110,7 @@
     (GLFW/glfwDestroyWindow handle)
     (GLFW/glfwTerminate)))
 
-(defn -main [& _]
+(defn -main [& _this+args]
   (let [window (->window)]
     (start (pc/->game (:handle window)) window)))
 

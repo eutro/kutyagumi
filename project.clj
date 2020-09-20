@@ -2,5 +2,5 @@
   :repositories [["clojars" {:url "https://clojars.org/repo"
                              :sign-releases false}]]
   :clean-targets ^{:protect false} ["target"]
-  :main kutyagumi.start
-  :aot [kutyagumi.start])
+  :main kutyagumi.main
+  :aot [kutyagumi.main])
