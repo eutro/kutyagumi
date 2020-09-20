@@ -13,6 +13,9 @@
   '[leiningen.clean :refer [clean]]
   '[leiningen.uberjar :refer [uberjar]])
 
+(import
+  '(java.io File))
+
 (defn read-project-clj []
   (p/ensure-dynamic-classloader)
   (-> "project.clj" load-file var-get))
@@ -46,7 +49,7 @@
      :source-paths   []
      :resource-paths paths}))
 
-(defn delete-children-recursively! [f]
+(defn delete-children-recursively! [^File f]
   (when (.isDirectory f)
     (doseq [f2 (.listFiles f)]
       (delete-children-recursively! f2)))
