@@ -1,0 +1,12 @@
+{:frames  [r r r r r r r r r r r r r r r r r r r r r r r r
+           r r r r r r r r r r r r r r r r r r r r r r r r
+           bl1 bl2 bl1
+           l l l l l l l l l l l l l l l l l l l l l l l l
+           l l l l l l l l l l l l l l l l l l l l l l l l
+           bl1 bl2 bl1]
+ :fps     8
+
+ :width   8, :height 8
+ :sprites [[:empty,,,, :green/r :green/l]
+           [:green/bl1 :red/bl1 :red/l]
+           [:green/bl2 :red/bl2 :red/r]]}
