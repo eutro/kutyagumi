@@ -1,14 +1,14 @@
-{:paths ["src" "resources"]
+{:paths ["src" "resources" "run"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}}
  :aliases {:dev {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
                               com.bhauman/figwheel-main {:mvn/version "0.2.9"}
                               orchestra {:mvn/version "2018.12.06-2"}
                               expound {:mvn/version "0.7.2"}
                               paravim {:mvn/version "RELEASE"}}
-                 :main-opts ["dev.clj"]}
+                 :main-opts ["run/dev.clj"]}
            :prod {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
                                leiningen {:mvn/version "2.9.0"}}
-                  :main-opts ["prod.clj"]}
+                  :main-opts ["run/prod.clj"]}
            :macos {:jvm-opts ["-XstartOnFirstThread"]}
            ;; these deps are not necessary during development
            ;; because paravim already brings them in

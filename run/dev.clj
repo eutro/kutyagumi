@@ -9,7 +9,7 @@
 
 (defmethod task nil
   [_]
-  (figwheel/-main "--build" "dev"))
+  (figwheel/-main "--build" "run/dev"))
 
 (require '[kutyagumi.start-dev])
 
