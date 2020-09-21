@@ -1,7 +1,8 @@
 (ns kutyagumi.misc.platform
   (:require [clojure.edn :as edn]
+            [clojure.core.async :as async]
             #?@(:clj  [[clojure.java.io :as io]]
-                :cljs [[clojure.core.async :as a]]))
+                :cljs [[clojure.core.async.interop :refer-macros [<!p]]]))
   #?(:clj (:import (java.nio ByteBuffer)
                    (org.lwjgl.glfw GLFW)
                    (org.lwjgl.system MemoryUtil)
@@ -9,51 +10,54 @@
                    (java.io ByteArrayOutputStream)
                    (clojure.lang LineNumberingPushbackReader))))
 
-(defn get-image [fname callback]
-  #?(:clj  (let [^bytes barray (with-open [out (ByteArrayOutputStream.)]
-                                 (with-open [is (-> (str "public/" fname)
-                                                    io/resource
-                                                    io/input-stream)]
-                                   (io/copy is out))
-                                 (.toByteArray out))
-                 *width (MemoryUtil/memAllocInt 1)
-                 *height (MemoryUtil/memAllocInt 1)
-                 *components (MemoryUtil/memAllocInt 1)
-                 direct-buffer (doto ^ByteBuffer
+(defn get-image [fname]
+  #?(:clj  (async/go
+             (let [^bytes barray (with-open [out (ByteArrayOutputStream.)]
+                                   (with-open [is (-> (str "public/" fname)
+                                                      io/resource
+                                                      io/input-stream)]
+                                     (io/copy is out))
+                                   (.toByteArray out))
+                   *width (MemoryUtil/memAllocInt 1)
+                   *height (MemoryUtil/memAllocInt 1)
+                   *components (MemoryUtil/memAllocInt 1)
+                   direct-buffer (doto ^ByteBuffer
                                      (ByteBuffer/allocateDirect (alength barray))
-                                 (.put barray)
-                                 (.flip))
-                 decoded-image (STBImage/stbi_load_from_memory
-                                 direct-buffer *width *height *components
-                                 STBImage/STBI_rgb_alpha)
-                 image {:data   decoded-image
-                        :width  (.get *width)
-                        :height (.get *height)}]
-             (MemoryUtil/memFree *width)
-             (MemoryUtil/memFree *height)
-             (MemoryUtil/memFree *components)
-             (callback image))
-     :cljs (let [image (js/Image.)]
+                                   (.put barray)
+                                   (.flip))
+                   decoded-image (STBImage/stbi_load_from_memory
+                                  direct-buffer *width *height *components
+                                  STBImage/STBI_rgb_alpha)
+                   image {:data   decoded-image
+                          :width  (.get *width)
+                          :height (.get *height)}]
+               (MemoryUtil/memFree *width)
+               (MemoryUtil/memFree *height)
+               (MemoryUtil/memFree *components)
+               image))
+     :cljs (let [image (js/Image.)
+                 chan (async/chan 1)]
              (doto image
                (-> .-src
                    (set! fname))
                (-> .-onload
-                   (set! #(callback {:data   image
-                                     :width  (.-width image)
-                                     :height (.-height image)})))))))
+                   (set! #(async/>!! chan
+                                     {:data   image
+                                      :width  (.-width image)
+                                      :height (.-height image)})))))))
 
 (defn get-edn
-  ([fname callback] (get-edn fname {} callback))
-  ([fname opts callback]
-   #?(:clj  (callback
-              (with-open [rd (-> (str "public/" fname) io/resource io/input-stream
+  ([fname] (get-edn fname {}))
+  ([fname opts]
+   #?(:clj  (async/go
+              (with-open [rd (-> (str "public/" fname)
+                                 io/resource io/input-stream
                                  io/reader LineNumberingPushbackReader.)]
                 (edn/read opts rd)))
-      :cljs (-> fname js/fetch
-                (.then (fn [r]
-                         (-> r .text
-                             (.then (fn [r]
-                                      (->> r (edn/read-string opts) callback))))))))))
+      :cljs (async/go
+              (-> fname js/fetch <!p
+                  .text <!p
+                  (edn/read-string opts))))))
 
 (defn get-width [game]
   #?(:clj  (let [*width (MemoryUtil/memAllocInt 1)

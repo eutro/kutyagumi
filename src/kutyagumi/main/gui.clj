@@ -4,7 +4,8 @@
   (:import (org.lwjgl.glfw GLFW
                            Callbacks
                            GLFWWindowCloseCallbackI
-                           GLFWMouseButtonCallbackI)
+                           GLFWMouseButtonCallbackI
+                           GLFWCursorPosCallbackI)
            (org.lwjgl.opengl GL GL33))
   (:gen-class))
 
@@ -27,7 +28,9 @@
     (throw (Exception. "Failed to create window"))))
 
 (defn start [game {:keys [handle]}]
-  (let [game (assoc game :delta-time 0, :total-time (GLFW/glfwGetTime))]
+  (let [game (assoc game
+                    :delta-time 0
+                    :total-time (GLFW/glfwGetTime))]
     (doto handle
       (GLFW/glfwShowWindow)
       (GLFW/glfwSetWindowCloseCallback
@@ -37,19 +40,22 @@
       (GLFW/glfwSetMouseButtonCallback
         (reify GLFWMouseButtonCallbackI
           (invoke [_ _ button action mods]
-            ))))
+            (println "Button:" button action mods))))
+      (GLFW/glfwSetCursorPosCallback
+        (reify GLFWCursorPosCallbackI
+          (invoke [_ _ x y]
+            (println "Pos:" x y)))))
     (loop [{last-time :total-time
-            :as game} game
-           state (core/init game)]
+            :as game} (core/init game)]
       (when-not (GLFW/glfwWindowShouldClose handle)
         (let [ts (GLFW/glfwGetTime)
               game (assoc game
                      :delta-time (- ts last-time)
                      :total-time ts)
-              state (core/main-loop game state)]
+              game (core/main-loop game)]
           (GLFW/glfwSwapBuffers handle)
           (GLFW/glfwPollEvents)
-          (recur game state))))
+          (recur game))))
     (Callbacks/glfwFreeCallbacks handle)
     (GLFW/glfwDestroyWindow handle)
     (GLFW/glfwTerminate)))

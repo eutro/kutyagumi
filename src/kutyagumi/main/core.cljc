@@ -7,28 +7,29 @@
             [clojure.core.async :as async]))
 
 (defn init [game]
-  (gui/init game)
-  (let [board-chan (async/chan 1)]
-    (mr/read-file
-      "test.board.edn"
-      (partial async/>!! board-chan))
-    (let [logic
-          (server/->ServerLogic
-            (rw/make-player)
-            (rw/make-player)
-            {:board (async/<!! board-chan)
-             :player :red})]
-      {:logic logic
-       :chan (game/update-game logic)})))
+  (let [logic
+        (server/->ServerLogic
+         (rw/make-player)
+         (rw/make-player)
+         {:board (-> "test.board.edn" mr/read-file async/<!!)
+          :player :red})]
+    (assoc (gui/init game)
+           :state {:logic logic
+                   :chan (game/update-game logic)})))
 
 (defn get-if-ready [chan]
   (first (async/alts!! [chan] :default nil)))
 
 (defn main-loop
-  [game {:keys [logic chan]
-         :as   state}]
+  [{{:keys [logic chan]
+     :as   state}
+    :state,
+    :as game}]
   (gui/render game (game/get-state logic))
   (if-some [new-logic (get-if-ready chan)]
-    {:logic new-logic
-     :chan (game/update-game new-logic)}
-    state))
+    (assoc game
+           :state
+           (assoc state
+                  :logic new-logic
+                  :chan (game/update-game new-logic)))
+    game))

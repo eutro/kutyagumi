@@ -1,5 +1,6 @@
 (ns kutyagumi.misc.map-reader
   (:require [clojure.edn :as edn]
+            [clojure.core.async :as async]
             [kutyagumi.misc.platform :as p]
             [kutyagumi.logic.board :as board]
             [kutyagumi.misc.util :as u]))
@@ -14,11 +15,9 @@
   #board/cell: map->LivingCell
   #board/wall: map->Wall"
   [text]
-  (-> {:readers readers}
-      (edn/read-string text)
-      u/transpose))
+  (-> {:readers readers} (edn/read-string text) u/transpose))
 
 (defn read-file
   "Read a board from a file. See read-board"
-  [fname callback]
-  (p/get-edn fname {:readers readers} #(-> % u/transpose callback)))
+  [fname]
+  (async/go (-> (p/get-edn fname {:readers readers}) async/<! u/transpose)))
