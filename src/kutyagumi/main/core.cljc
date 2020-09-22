@@ -7,15 +7,18 @@
             [clojure.core.async :as async]))
 
 (defn init [game]
-  (async/go
+  (#?(:cljs async/go
+      :clj  do)
     (let [{:keys [logic]
            :as   game}
-          (async/<!
+          (#?(:cljs async/<!
+              :clj do)
             (gui/init
               (merge
                 (game/->Game
                   (game/->State
-                    (-> "test.board.edn" mr/read-file async/<!)
+                    (-> "test.board.edn" mr/read-file #?(:cljs async/<!
+                                                         :clj async/<!!))
                     :red)
                   (server/->ServerLogic
                     (gp/->GuiPlayer)

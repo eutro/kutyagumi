@@ -32,9 +32,10 @@
   (let [mouse-pos (atom [0, 0])
         click-chan (async/chan (async/dropping-buffer 1))
         game (assoc game
-                    :delta-time 0
-                    :total-time (GLFW/glfwGetTime)
-                    :clicks click-chan)]
+               :delta-time 0
+               :total-time (GLFW/glfwGetTime)
+               :clicks click-chan)
+        game (core/init game)]
     (doto handle
       (GLFW/glfwShowWindow)
       (GLFW/glfwSetWindowCloseCallback
@@ -52,7 +53,7 @@
           (invoke [_ _ x y]
             (reset! mouse-pos [x y])))))
     (loop [{last-time :total-time
-            :as game} (async/<!! (core/init game))]
+            :as       game} game]
       (when-not (GLFW/glfwWindowShouldClose handle)
         (let [ts (GLFW/glfwGetTime)
               game (assoc game
