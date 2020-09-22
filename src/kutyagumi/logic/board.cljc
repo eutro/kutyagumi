@@ -26,22 +26,8 @@
   "Check if the cell at (x, y) on the board is owned by
   the given player."
   [board x y player]
-  (= (:owner (u/nd-nth-else board nil x y)) player))
-
-(defrecord Wall [sides]
-  BoardPart
-  (check-placement [_ [x y] {:keys [player board]}]
-    (some (fn [[side [dx dy]]]
-            (let [cx (+ x dx)
-                  cy (+ y dy)]
-              (and (owned-by? board cx cy player)
-                   (loop [c (u/nd-nth-else board nil cx cy)]
-                     (cond (nil? c) true
-                           (instance? Wall c) (-> c :sides (contains? (side->opposite side)))
-                           :else (recur (:previous c)))))))
-          (-> (apply dissoc side->vec sides) seq)))
-  (do-placement [{:keys [previous]} pos state]
-    (do-placement previous pos state)))
+  (= (:owner (u/nd-nth-else board nil x y))
+     player))
 
 (def player->next
   {:red   :green
@@ -56,6 +42,21 @@
                                    (assoc :previous this)))
                    nil)
       (update :player player->next)))
+
+(defrecord Wall [sides]
+  BoardPart
+  (check-placement [_ [x, y] {:keys [player board]}]
+    (some (fn [[side [dx dy]]]
+            (let [cx (+ x dx)
+                  cy (+ y dy)]
+              (and (owned-by? board cx cy player)
+                   (loop [c (u/nd-nth-else board nil cx cy)]
+                     (cond (nil? c) true
+                           (instance? Wall c) (-> c :sides (contains? (side->opposite side)))
+                           :else (recur (:previous c)))))))
+          (-> (apply dissoc side->vec sides) seq)))
+  (do-placement [this [x, y] state]
+    (default-place this x y state)))
 
 (extend-protocol BoardPart
   nil

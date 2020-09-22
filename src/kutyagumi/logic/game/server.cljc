@@ -6,6 +6,8 @@
             [kutyagumi.logic.board :as board])
   #?(:clj (:import (kutyagumi.logic.game.core GameLogic))))
 
+(declare ->ServerLogic)
+
 (defrecord ServerLogic
   [red green]
   GameLogic
@@ -24,7 +26,7 @@
                                    x, y)]
         (if (and (not= '__OUT_OF_BOUNDS
                        cell)
-                 (board/check-placement cell [x, y] board))
+                 (board/check-placement cell [x, y] state))
           (let [new-state
                 (board/do-placement (util/nd-nth board
                                                  x, y)
