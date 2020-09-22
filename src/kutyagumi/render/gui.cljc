@@ -19,6 +19,8 @@
     (gl game "blendFunc"
         (gl game "SRC_ALPHA")
         (gl game "ONE_MINUS_SRC_ALPHA"))
+    (gl game "enable"
+        (gl game "DEPTH_TEST"))
 
     (assoc game
       ::assets
@@ -29,39 +31,39 @@
                  ret nil]
             (if-not (seq assets)
               ret
-              (recur (next assets)
-                     (conj ret
-                           (let [[k {:keys   [image]
-                                     metaloc :meta}]
-                                 (first assets)]
-                             (let [{:keys         [sprites]
-                                    sprite-width  :width
-                                    sprite-height :height
-                                    :as           metadata}
-                                   (-> (str "assets/" metaloc) p/get-edn async/<!)
+              (recur
+                (next assets)
+                (conj ret
+                      (let [k (first assets)]
+                        (let [{:keys         [sprites shaders]
+                               sprite-width  :width
+                               sprite-height :height
+                               :as           metadata}
+                              (-> (str "assets/" (name k) ".edn") p/get-edn async/<!)
 
-                                   {:keys      [data]
-                                    tex-width  :width
-                                    tex-height :height}
-                                   (-> (str "assets/" image) p/get-image async/<!)
+                              {:keys      [data]
+                               tex-width  :width
+                               tex-height :height}
+                              (-> (str "assets/" (name k) ".png") p/get-image async/<!)
 
-                                   uncompiled (e/->image-entity game data tex-width tex-height)]
-                               (fn [resources]
-                                 (assoc resources
-                                   k
-                                   {:meta metadata
-                                    :sprites
-                                          (into {}
-                                                (let [entity (c/compile game uncompiled)]
-                                                  (for [x (range (quot tex-width sprite-width))
-                                                        y (range (quot tex-height sprite-height))]
-                                                    (when-some [sprite-key
-                                                                (u/nd-nth-else sprites nil
-                                                                               y, x)]
-                                                      [sprite-key
-                                                       (t/crop entity
-                                                               (* x sprite-width), (* y sprite-height)
-                                                               sprite-width, sprite-height)]))))}))))))))
+                              uncompiled (merge (e/->image-entity game data tex-width tex-height)
+                                                shaders)]
+                          (fn [resources]
+                            (assoc resources
+                              k
+                              {:meta metadata
+                               :sprites
+                                     (into {}
+                                           (let [entity (c/compile game uncompiled)]
+                                             (for [x (range (quot tex-width sprite-width))
+                                                   y (range (quot tex-height sprite-height))]
+                                               (when-some [sprite-key
+                                                           (u/nd-nth-else sprites nil
+                                                                          y, x)]
+                                                 [sprite-key
+                                                  (t/crop entity
+                                                          (* x sprite-width), (* y sprite-height)
+                                                          sprite-width, sprite-height)]))))}))))))))
           #?@(:cljs [do]
               :clj  [async/go async/<!!]))))))
 
@@ -127,18 +129,18 @@
   (draw [{:keys [sides]}
          board
          {{{:keys [sprites]}
-           :terrain}
+           :walls}
               ::assets,
           :as game}
          pipeline
          x, y]
-    (draw nil board game pipeline x y)
     (doseq [side sides]
       (-> ((keyword "wall" (name side))
            sprites)
           (project-to game)
           pipeline
-          (->> (c/render game))))))
+          (->> (c/render game))))
+    (draw nil board game pipeline x y)))
 
 (def color->background
   {:red   [(/ 224 255)

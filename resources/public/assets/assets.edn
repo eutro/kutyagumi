@@ -1,4 +1,3 @@
-{:cells {:meta "cells.edn"
-         :image "cells.png"}
- :terrain {:meta "terrain.edn"
-           :image "terrain.png"}}
+[:cells
+ :walls
+ :terrain]
