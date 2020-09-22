@@ -1,5 +1,6 @@
 (ns kutyagumi.main.gui
   (:require [kutyagumi.main.core :as core]
+            [clojure.core.async :as async]
             [play-cljc.gl.core :as pc])
   (:import (org.lwjgl.glfw GLFW
                            Callbacks
@@ -28,9 +29,12 @@
     (throw (Exception. "Failed to create window"))))
 
 (defn start [game {:keys [handle]}]
-  (let [game (assoc game
+  (let [mouse-pos (atom [0, 0])
+        click-chan (async/chan (async/dropping-buffer 1))
+        game (assoc game
                     :delta-time 0
-                    :total-time (GLFW/glfwGetTime))]
+                    :total-time (GLFW/glfwGetTime)
+                    :clicks click-chan)]
     (doto handle
       (GLFW/glfwShowWindow)
       (GLFW/glfwSetWindowCloseCallback
@@ -39,12 +43,14 @@
             (System/exit 0))))
       (GLFW/glfwSetMouseButtonCallback
         (reify GLFWMouseButtonCallbackI
-          (invoke [_ _ button action mods]
-            (println "Button:" button action mods))))
+          (invoke [_ _ button action _mods]
+            (when (and (= button GLFW/GLFW_MOUSE_BUTTON_LEFT)
+                       (zero? action))
+              (async/>!! click-chan @mouse-pos)))))
       (GLFW/glfwSetCursorPosCallback
         (reify GLFWCursorPosCallbackI
           (invoke [_ _ x y]
-            (println "Pos:" x y)))))
+            (reset! mouse-pos [x y])))))
     (loop [{last-time :total-time
             :as game} (core/init game)]
       (when-not (GLFW/glfwWindowShouldClose handle)

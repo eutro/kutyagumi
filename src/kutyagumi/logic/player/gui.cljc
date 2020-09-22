@@ -1,19 +1,8 @@
 (ns kutyagumi.logic.player.gui
   (:require [kutyagumi.logic.player.core #?@(:cljs [:refer [Player]])]
-            [clojure.core.async :as async])
+            [clojure.core.async :as async]
+            [kutyagumi.render.gui :as render])
   #?(:clj (:import (kutyagumi.logic.player.core Player))))
-
-(def listening? (atom false))
-(def click-channel (async/chan 1
-                               (fn [add]
-                                 (fn [& args]
-                                   (when @listening?
-                                     (apply add args)
-                                     (reset! listening? false))))))
-
-(defn next-click []
-  (reset! listening? true)
-  click-channel)
 
 (deftype
   ^{:doc
@@ -22,7 +11,12 @@
     Implies the GUI renderer."}
   GuiPlayer []
   Player
-  (next-move [_]
+  (next-move [_ {:keys [clicks]}]
+    (async/poll! clicks)
     (async/go
-      (reset! listening? true)))
+      (let [size (render/seven-eighths render/CELL_SIZE)
+            [mx, my]
+            (async/<! clicks)]
+        [(quot (long mx) size)
+         (quot (long my) size)])))
   (update-state [this _state] (async/to-chan! [this])))

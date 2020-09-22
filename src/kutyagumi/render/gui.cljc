@@ -144,6 +144,12 @@
            (/ 161 255)
            1]})
 
+(def CELL_SIZE 40)
+
+(defn seven-eighths [n]
+  (/ (* n 7)
+     8))
+
 (defn render [{{:keys [board player]}
                :state,
                :as game}]
@@ -160,6 +166,7 @@
     (draw (u/nd-nth board x y)
           board, game
           #(-> %
-               (t/scale 40 40)
-               (t/translate (* 7 x (/ 8)) (* 7 y (/ 8))))
+               (t/scale CELL_SIZE CELL_SIZE)
+               (t/translate (seven-eighths x)
+                            (seven-eighths y)))
           x, y)))

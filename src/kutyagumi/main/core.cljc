@@ -3,7 +3,7 @@
             [kutyagumi.render.gui :as gui]
             [kutyagumi.logic.game.server :as server]
             [kutyagumi.misc.map-reader :as mr]
-            [kutyagumi.logic.player.reader-writer :as rw]
+            [kutyagumi.logic.player.gui :as gp]
             [clojure.core.async :as async]))
 
 (defn init [game]
@@ -16,8 +16,8 @@
                 (-> "test.board.edn" mr/read-file async/<!!)
                 :red)
               (server/->ServerLogic
-                (rw/make-player)
-                (rw/make-player)))
+                (gp/->GuiPlayer)
+                (gp/->GuiPlayer)))
             game))]
     (assoc game
       ::chan (game/update-game logic game))))
