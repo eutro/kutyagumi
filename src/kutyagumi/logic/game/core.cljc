@@ -8,11 +8,23 @@
 
   On a client, this would be responsible for receiving
   changes to the board."
-  (update-game [this]
-    "Update the game state. Await the next move, etc.
+  (update-game [this game]
+    "Update the game state, awaiting the next move, etc.
 
     Expected to return a channel as such:
 
-    - new-logic
-    - <end>")
-  (get-state [this] "Get the current game state."))
+    - new-game
+    - <end>"))
+
+(defrecord
+  ^{:doc
+    "The game instance, holding the game state and
+    current game logic, and some context-specific
+    things (IO channels, window handle, etc.)"}
+  Game [state logic])
+
+(defrecord
+  ^{:doc
+    "The game state, holding the board and the player
+    whose turn it is."}
+  State [board player])

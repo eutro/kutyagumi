@@ -4,7 +4,7 @@
   "Generic protocol for players.
 
   This may be a local player, bot, remote player etc."
-  (next-move [this]
+  (next-move [this game]
     "A promise of the next move this player will make,
     in the form of a clojure.core.async channel returning
     data in this format:
@@ -12,7 +12,7 @@
     - [x y]
     - <end>")
   (update-state [this state]
-    "Update the game state for this player.
+    "Sync the game state to this player.
     Will be called each time the state changes.
 
     Expected to return a channel supplying the

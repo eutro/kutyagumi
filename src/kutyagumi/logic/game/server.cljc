@@ -7,16 +7,18 @@
   #?(:clj (:import (kutyagumi.logic.game.core GameLogic))))
 
 (defrecord ServerLogic
-  [red green state]
+  [red green]
   GameLogic
-  (update-game [{{:keys [board player]}
-                     :state
-                 :as this}]
+  (update-game [this,
+                {{:keys [board player]
+                  :as   state}
+                     :state,
+                 :as game}]
     (async/go
       (let [[x y]
             (-> this
                 player
-                player/next-move
+                (player/next-move game)
                 async/<!)
             cell (util/nd-nth-else board '__OUT_OF_BOUNDS
                                    x, y)]
@@ -32,8 +34,9 @@
                 chan
                 (async/merge [(player/update-state red new-state)
                               (player/update-state green new-state)])]
-            (->ServerLogic (async/<! chan)
-                           (async/<! chan)
-                           new-state))
-          this))))
-  (get-state [_] state))
+            (assoc game
+              :state new-state
+              :logic (->ServerLogic
+                       (async/<! chan)
+                       (async/<! chan))))
+          game)))))

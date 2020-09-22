@@ -11,13 +11,13 @@
   #?(:clj (:import (kutyagumi.logic.board LivingCell Wall))))
 
 (defn init [game]
-  (gl game enable
-      (gl game BLEND))
-  (gl game blendFunc
-      (gl game SRC_ALPHA)
-      (gl game ONE_MINUS_SRC_ALPHA))
+  (gl game "enable"
+      (gl game "BLEND"))
+  (gl game "blendFunc"
+      (gl game "SRC_ALPHA")
+      (gl game "ONE_MINUS_SRC_ALPHA"))
 
-  (assoc game :assets
+  (assoc game ::assets
          (reduce
           #(%2 %1) {}
           (async/<!!
@@ -76,7 +76,7 @@
          {{{{blank-sprite :blank}
             :sprites}
            :terrain}
-          :assets,
+          ::assets,
           :as game}
          pipeline
          _x, _y]
@@ -93,7 +93,7 @@
             {:keys [frames, fps]}
             :meta}
            :cells}
-          :assets,
+          ::assets,
           :as game}
          pipeline
          x, y]
@@ -122,7 +122,7 @@
          board
          {{{:keys [sprites]}
            :terrain}
-          :assets,
+          ::assets,
           :as game}
          pipeline
          x, y]
@@ -144,8 +144,9 @@
            (/ 161 255)
            1]})
 
-(defn render [game {:keys [board player]
-                    :as _state}]
+(defn render [{{:keys [board player]}
+               :state,
+               :as game}]
   (c/render game
             {:viewport {:x      0
                         :y      0
