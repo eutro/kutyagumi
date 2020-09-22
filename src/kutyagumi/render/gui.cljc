@@ -150,11 +150,28 @@
            (/ 161 255)
            1]})
 
-(def CELL_SIZE 40)
-
 (defn seven-eighths [n]
   (/ (* n 7)
      8))
+
+(defn padded [n]
+  (* n 1.1))
+
+(defn get-position-info
+  "[cell-size [offset-x offset-y]]"
+  [{{:keys [board]}
+        :state,
+    :as game}]
+  (let [width (p/get-width game)
+        height (p/get-height game)
+        board-width (-> board count)
+        board-height (-> board first count)
+        shrunk (min (/ height (padded board-height))
+                    (/ width (padded board-width)))
+        cell-size (long (* shrunk (/ 8 7)))]
+    [cell-size
+     [(/ (- width (* board-width shrunk)) 2)
+      (/ (- height (* board-height shrunk)) 2)]]))
 
 (defn render [{{:keys [board player]}
                    :state,
@@ -167,12 +184,14 @@
              :clear    {:color (color->background player)
                         :depth 1}})
 
-  (doseq [x (-> board count range)
-          y (-> board first count range)]
-    (draw (u/nd-nth board x y)
-          board, game
-          #(-> %
-               (t/scale CELL_SIZE CELL_SIZE)
-               (t/translate (seven-eighths x)
-                            (seven-eighths y)))
-          x, y)))
+  (let [[cell-size [offset-x offset-y]] (get-position-info game)]
+    (doseq [x (-> board count range)
+            y (-> board first count range)]
+      (draw (u/nd-nth board x y)
+            board, game
+            #(-> %
+                 (t/translate offset-x offset-y)
+                 (t/scale cell-size cell-size)
+                 (t/translate (seven-eighths x)
+                              (seven-eighths y)))
+            x, y))))

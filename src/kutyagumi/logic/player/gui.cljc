@@ -11,12 +11,13 @@
     Implies the GUI renderer."}
   GuiPlayer []
   Player
-  (next-move [_ {:keys [clicks]}]
+  (next-move [_ {:keys [clicks]
+                 :as   game}]
     (async/poll! clicks)
     (async/go
-      (let [size (render/seven-eighths render/CELL_SIZE)
-            [mx, my]
-            (async/<! clicks)]
-        [(quot (long mx) size)
-         (quot (long my) size)])))
+      (let [[mx, my] (async/<! clicks)
+            [cell-size [offset-x offset-y]] (render/get-position-info game)
+            size (render/seven-eighths cell-size)]
+        [(quot (long (- mx offset-x)) size)
+         (quot (long (- my offset-y)) size)])))
   (update-state [this _state] (async/to-chan! [this])))
