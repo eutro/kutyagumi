@@ -22,16 +22,13 @@
     (assoc game
       ::chan (game/update-game logic game))))
 
-(defn get-if-ready [chan]
-  (first (async/alts!! [chan] :default nil)))
-
 (defn main-loop
   [{::keys [chan]
     :as    game}]
   (gui/render game)
   (if-some [{:keys [logic]
              :as   new-game}
-            (get-if-ready chan)]
+            (async/poll! chan)]
     (assoc new-game
       ::chan (game/update-game logic new-game))
     game))
