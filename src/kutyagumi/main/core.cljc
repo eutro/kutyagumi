@@ -7,20 +7,22 @@
             [clojure.core.async :as async]))
 
 (defn init [game]
-  (let [{:keys [logic]
-         :as   game}
-        (gui/init
-          (merge
-            (game/->Game
-              (game/->State
-                (-> "test.board.edn" mr/read-file async/<!!)
-                :red)
-              (server/->ServerLogic
-                (gp/->GuiPlayer)
-                (gp/->GuiPlayer)))
-            game))]
-    (assoc game
-      ::chan (game/update-game logic game))))
+  (async/go
+    (let [{:keys [logic]
+           :as   game}
+          (async/<!
+            (gui/init
+              (merge
+                (game/->Game
+                  (game/->State
+                    (-> "test.board.edn" mr/read-file async/<!)
+                    :red)
+                  (server/->ServerLogic
+                    (gp/->GuiPlayer)
+                    (gp/->GuiPlayer)))
+                game)))]
+      (assoc game
+        ::chan (game/update-game logic game)))))
 
 (defn main-loop
   [{::keys [chan]

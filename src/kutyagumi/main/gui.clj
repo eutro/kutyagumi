@@ -52,7 +52,7 @@
           (invoke [_ _ x y]
             (reset! mouse-pos [x y])))))
     (loop [{last-time :total-time
-            :as game} (core/init game)]
+            :as game} (async/<!! (core/init game))]
       (when-not (GLFW/glfwWindowShouldClose handle)
         (let [ts (GLFW/glfwGetTime)
               game (assoc game
@@ -66,7 +66,7 @@
     (GLFW/glfwDestroyWindow handle)
     (GLFW/glfwTerminate)))
 
-(defn -main [& _this+args]
+(defn -main [& _args]
   (let [{:keys [handle] :as window} (->window)]
     (start (pc/->game handle) window)))
 

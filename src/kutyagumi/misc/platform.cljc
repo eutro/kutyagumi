@@ -1,8 +1,8 @@
 (ns kutyagumi.misc.platform
   (:require [clojure.edn :as edn]
             [clojure.core.async :as async]
-            #?@(:clj  [[clojure.java.io :as io]]
-                :cljs [[clojure.core.async.interop :refer-macros [<!p]]]))
+            #?(:clj  [clojure.java.io :as io]
+               :cljs [cljs.core.async.interop :refer-macros [<p!]]))
   #?(:clj (:import (java.nio ByteBuffer)
                    (org.lwjgl.glfw GLFW)
                    (org.lwjgl.system MemoryUtil)
@@ -22,12 +22,12 @@
                    *height (MemoryUtil/memAllocInt 1)
                    *components (MemoryUtil/memAllocInt 1)
                    direct-buffer (doto ^ByteBuffer
-                                     (ByteBuffer/allocateDirect (alength barray))
+                                       (ByteBuffer/allocateDirect (alength barray))
                                    (.put barray)
                                    (.flip))
                    decoded-image (STBImage/stbi_load_from_memory
-                                  direct-buffer *width *height *components
-                                  STBImage/STBI_rgb_alpha)
+                                   direct-buffer *width *height *components
+                                   STBImage/STBI_rgb_alpha)
                    image {:data   decoded-image
                           :width  (.get *width)
                           :height (.get *height)}]
@@ -36,15 +36,17 @@
                (MemoryUtil/memFree *components)
                image))
      :cljs (let [image (js/Image.)
-                 chan (async/chan 1)]
+                 chan (async/promise-chan)]
              (doto image
                (-> .-src
                    (set! fname))
                (-> .-onload
-                   (set! #(async/>!! chan
-                                     {:data   image
-                                      :width  (.-width image)
-                                      :height (.-height image)})))))))
+                   (set! #(async/put!
+                            chan
+                            {:data   image
+                             :width  (.-width image)
+                             :height (.-height image)}))))
+             chan)))
 
 (defn get-edn
   ([fname] (get-edn fname {}))
@@ -55,9 +57,9 @@
                                  io/reader LineNumberingPushbackReader.)]
                 (edn/read opts rd)))
       :cljs (async/go
-              (-> fname js/fetch <!p
-                  .text <!p
-                  (edn/read-string opts))))))
+              (-> fname js/fetch <p!
+                  .text <p!
+                  (->> (edn/read-string opts)))))))
 
 (defn get-width [game]
   #?(:clj  (let [*width (MemoryUtil/memAllocInt 1)

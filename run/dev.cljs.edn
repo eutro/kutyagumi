@@ -1,4 +1,4 @@
-{:main          kutyagumi.main.gui.cljs
+{:main          kutyagumi.main.gui
  :optimizations :none
  :output-to     "resources/public/main.js"
  :output-dir    "resources/public/main.out"

@@ -12,7 +12,7 @@
                (-> game :state :board text/render)
                (-> game :logic (game/update-game game) async/<! recur))))
 
-(defn -main [& _this+args]
+(defn -main [& _args]
   (start
     (game/->Game
       (game/->State

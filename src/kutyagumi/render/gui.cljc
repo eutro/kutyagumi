@@ -11,53 +11,55 @@
   #?(:clj (:import (kutyagumi.logic.board LivingCell Wall))))
 
 (defn init [game]
-  (gl game "enable"
-      (gl game "BLEND"))
-  (gl game "blendFunc"
-      (gl game "SRC_ALPHA")
-      (gl game "ONE_MINUS_SRC_ALPHA"))
+  (async/go
+    (gl game "enable"
+        (gl game "BLEND"))
+    (gl game "blendFunc"
+        (gl game "SRC_ALPHA")
+        (gl game "ONE_MINUS_SRC_ALPHA"))
 
-  (assoc game ::assets
-         (reduce
-          #(%2 %1) {}
-          (async/<!!
-           (async/go
-             (loop [assets (-> "assets/assets.edn" p/get-edn async/<!)
-                    ret nil]
-               (if-not (seq assets)
-                 ret
-                 (recur (next assets)
-                        (conj ret
-                              (let [[k {:keys [image]
-                                        metaloc :meta}]
-                                    (first assets)]
-                                (let [{:keys [sprites]
-                                       sprite-width :width
-                                       sprite-height :height
-                                       :as metadata}
-                                      (-> (str "assets/" metaloc) p/get-edn async/<!)
+    (assoc game
+      ::assets
+      (reduce
+        #(%2 %1) {}
+        (loop [assets (-> "assets/assets.edn" p/get-edn async/<!)
+               ret nil]
+          (if-not (seq assets)
+            ret
+            (recur (next assets)
+                   (conj ret
+                         (let [[k {:keys   [image]
+                                   metaloc :meta}]
+                               (first assets)]
+                           (let [{:keys         [sprites]
+                                  sprite-width  :width
+                                  sprite-height :height
+                                  :as           metadata}
+                                 (-> (str "assets/" metaloc) p/get-edn async/<!)
 
-                                      {:keys [data]
-                                       tex-width :width
-                                       tex-height :height}
-                                      (-> (str "assets/" image) p/get-image async/<!)
+                                 {:keys      [data]
+                                  tex-width  :width
+                                  tex-height :height}
+                                 (-> (str "assets/" image) p/get-image async/<!)
 
-                                      uncompiled (e/->image-entity game data tex-width tex-height)]
-                                  (fn [resources]
-                                    (assoc resources k
-                                           {:meta metadata
-                                            :sprites
-                                            (into {}
-                                                  (let [entity (c/compile game uncompiled)]
-                                                    (for [x (range (quot tex-width sprite-width))
-                                                          y (range (quot tex-height sprite-height))]
-                                                      (when-some [sprite-key
-                                                                  (u/nd-nth-else sprites nil
-                                                                                 y, x)]
-                                                        [sprite-key
-                                                         (t/crop entity
-                                                                 (* x sprite-width), (* y sprite-height)
-                                                                 sprite-width, sprite-height)]))))})))))))))))))
+                                 uncompiled (e/->image-entity game data tex-width tex-height)]
+                             (fn [resources]
+                               (assoc resources
+                                 k
+                                 {:meta metadata
+                                  :sprites
+                                        (into {}
+                                              (let [entity (c/compile game uncompiled)]
+                                                (for [x (range (quot tex-width sprite-width))
+                                                      y (range (quot tex-height sprite-height))]
+                                                  (when-some [sprite-key
+                                                              (u/nd-nth-else sprites nil
+                                                                             y, x)]
+                                                    [sprite-key
+                                                     (t/crop entity
+                                                             (* x sprite-width), (* y sprite-height)
+                                                             sprite-width, sprite-height)]))))})))))))))
+      )))
 
 (defprotocol GuiRenderable
   (draw [this board game
@@ -76,7 +78,7 @@
          {{{{blank-sprite :blank}
             :sprites}
            :terrain}
-          ::assets,
+              ::assets,
           :as game}
          pipeline
          _x, _y]
@@ -91,10 +93,10 @@
          {:keys [total-time]
           {{:keys [sprites]
             {:keys [frames, fps]}
-            :meta}
+                  :meta}
            :cells}
-          ::assets,
-          :as game}
+                ::assets,
+          :as   game}
          pipeline
          x, y]
     (let [frame-count (count frames)
@@ -122,7 +124,7 @@
          board
          {{{:keys [sprites]}
            :terrain}
-          ::assets,
+              ::assets,
           :as game}
          pipeline
          x, y]
@@ -151,7 +153,7 @@
      8))
 
 (defn render [{{:keys [board player]}
-               :state,
+                   :state,
                :as game}]
   (c/render game
             {:viewport {:x      0
