@@ -78,6 +78,20 @@
              (max 1 (p/get-width game))
              (max 1 (p/get-height game))))
 
+(def color->background
+  {:red   [(/ 224 255)
+           (/ 161 255)
+           (/ 161 255)
+           1]
+   :green [(/ 193 255)
+           (/ 224 255)
+           (/ 161 255)
+           1]})
+
+(defn seven-eighths [n]
+  (/ (* n 7)
+     8))
+
 (extend-protocol GuiRenderable
   nil
   (draw [_ _board
@@ -122,6 +136,8 @@
         (-> sprite
             (project-to game)
             pipeline
+            (t/translate 0.125 0.125)
+            (t/scale 0.75 0.75)
             (->> (c/render game)))))
     (draw previous board game pipeline x y))
 
@@ -141,20 +157,6 @@
           pipeline
           (->> (c/render game))))
     (draw nil board game pipeline x y)))
-
-(def color->background
-  {:red   [(/ 224 255)
-           (/ 161 255)
-           (/ 161 255)
-           1]
-   :green [(/ 193 255)
-           (/ 224 255)
-           (/ 161 255)
-           1]})
-
-(defn seven-eighths [n]
-  (/ (* n 7)
-     8))
 
 (defn padded [n]
   (* n 1.1))
