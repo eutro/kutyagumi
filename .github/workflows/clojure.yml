@@ -22,7 +22,7 @@ jobs:
       with:
         tools-deps: 1.10.1.693
     - name: Build JS
-      run: clj -A:prod:play-cljc
+      run: clojure -A:prod:play-cljc
     - name: Build Pages
       run: |
         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
