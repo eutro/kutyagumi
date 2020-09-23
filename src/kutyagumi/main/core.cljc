@@ -12,14 +12,14 @@
     (let [{:keys [logic]
            :as   game}
           (#?(:cljs async/<!
-              :clj do)
+              :clj  do)
             (gui/init
               (merge
                 (game/->Game
                   (game/->State
-                    (#?(:cljs async/<!
-                        :clj  async/<!!)
-                      (mr/pick-board))
+                    (-> (mr/pick-board)
+                        #?(:cljs async/<!
+                           :clj  async/<!!))
                     :red)
                   (server/->ServerLogic
                     (gp/->GuiPlayer)
