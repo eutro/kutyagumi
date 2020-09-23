@@ -1,3 +1,15 @@
+# Kutyagumi
+
+A game about cells and taking over the world!
+
+## How to play
+
+The web version of the game is available to play [here](https://eutropius225.github.io/kutyagumi/index.html), or you can [build it yourself](#building)!
+
+[rules and their implementation coming soon]
+
+## Building
+
 To build this project, you'll need the Clojure CLI tool:
 
 https://clojure.org/guides/deps_and_cli
