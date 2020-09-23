@@ -1,12 +1,31 @@
 # Kutyagumi
 
-A game about cells and taking over the world!
+A two-player game about cells and taking over the world!
+
+## Where to play
+
+The web version of the game is available to play [here](https://eutropius225.github.io/kutyagumi/index.html),
+or you can [build it yourself](#building)!
 
 ## How to play
 
-The web version of the game is available to play [here](https://eutropius225.github.io/kutyagumi/index.html), or you can [build it yourself](#building)!
+### Overview
 
-[rules and their implementation coming soon]
+There are two colonies of cells (![Cells](resources/public/assets/cells.png)), red and green, 
+fighting for territory.
+
+Your objective is to seize more of the board than your opponent.
+
+### Placement
+
+Cells can be placed adjacent (up, down, left or right) to other cells of their colour, 
+provided there is no wall (![Wall](resources/public/assets/walls.png)) between them.
+
+To place a cell, click a suitable place on the board when it is your turn.
+
+![](resources/showcase/place_red.gif)
+
+_Note that the background colour reflects whose turn it is._ 
 
 ## Building
 
