@@ -1,0 +1,30 @@
+[[#board/cell {:owner :red} #board/cell {:owner :red} #board/cell {:owner :red}
+  #board/cell {:owner :red} #board/cell {:owner :red} #board/cell {:owner :red}
+  #board/cell {:owner :red} #board/cell {:owner :red} #board/cell {:owner :red}
+  #board/cell {:owner :red} #board/cell {:owner :red} #board/cell {:owner :red}
+  #board/cell {:owner :red} #board/cell {:owner :red} #board/cell {:owner :red}
+  #board/cell {:owner :red} #board/cell {:owner :red} #board/cell {:owner :red}]
+ [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil
+  #board/wall {:sides #{:up}}
+  #board/wall {:sides #{:up}}
+  #board/wall {:sides #{:up}}
+  #board/wall {:sides #{:up}}
+  nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil
+  #board/wall {:sides #{:down}}
+  #board/wall {:sides #{:down}}
+  #board/wall {:sides #{:down}}
+  #board/wall {:sides #{:down}}
+  nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [#board/cell {:owner :green} #board/cell {:owner :green} #board/cell {:owner :green}
+  #board/cell {:owner :green} #board/cell {:owner :green} #board/cell {:owner :green}
+  #board/cell {:owner :green} #board/cell {:owner :green} #board/cell {:owner :green}
+  #board/cell {:owner :green} #board/cell {:owner :green} #board/cell {:owner :green}
+  #board/cell {:owner :green} #board/cell {:owner :green} #board/cell {:owner :green}
+  #board/cell {:owner :green} #board/cell {:owner :green} #board/cell {:owner :green}]]
