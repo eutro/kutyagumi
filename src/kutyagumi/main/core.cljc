@@ -17,8 +17,9 @@
               (merge
                 (game/->Game
                   (game/->State
-                    (-> "test.board.edn" mr/read-file #?(:cljs async/<!
-                                                         :clj async/<!!))
+                    (#?(:cljs async/<!
+                        :clj  async/<!!)
+                      (mr/pick-board))
                     :red)
                   (server/->ServerLogic
                     (gp/->GuiPlayer)

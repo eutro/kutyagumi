@@ -16,9 +16,7 @@
   (start
     (game/->Game
       (game/->State
-        (-> "test.board.edn"
-            mr/read-file
-            async/<!!)
+        (async/<!! (mr/pick-board))
         :red)
       (server/->ServerLogic
         (rw/make-player)
