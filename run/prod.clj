@@ -61,7 +61,7 @@
         out-dir "resources/public/main.out"]
     (println "Building main.js")
     (delete-children-recursively! (io/file out-dir))
-    (api/build "src" {:main          'kutyagumi.start
+    (api/build "src" {:main          'kutyagumi.main.gui
                       :optimizations :advanced
                       :output-to     out-file
                       :output-dir    out-dir})
