@@ -151,8 +151,7 @@
          pipeline
          x, y]
     (doseq [side sides]
-      (-> ((keyword "wall" (name side))
-           sprites)
+      (-> ((keyword "wall" (name side)) sprites)
           (project-to game)
           pipeline
           (->> (c/render game))))

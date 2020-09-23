@@ -34,11 +34,11 @@
                 "GG"]}
        owner)))
   Wall
-  (render-as-text [{:keys [sides]}]
-    [(str (-> :up sides (if "-" " "))
-          (-> :right sides (if "|" " ")))
-     (str (-> :left sides (if "|" " "))
-          (-> :down sides (if "-" " ")))]))
+  (render-as-text [{has-side? :sides}]
+    [(str (if (has-side? :up) "-" " ")
+          (if (has-side? :right) "|" " "))
+     (str (if (has-side? :left) "|" " ")
+          (if (has-side? :down) "-" " "))]))
 
 (defn pad-left
   ([obj n] (pad-left obj n \space))

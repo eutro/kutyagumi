@@ -61,7 +61,7 @@
                               [cx cy]
                               (side->opposite side)
                               state)))
-          (-> (apply dissoc side->vec sides) seq)))
+          (seq (apply dissoc side->vec sides))))
   (do-placement [this [x, y] state]
     (default-place this x y state))
   (can-place-from [_this _pos _side _state] false))

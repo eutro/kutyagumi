@@ -12,12 +12,12 @@
 
 (defn get-image [fname]
   #?(:clj  (async/go
-             (let [^bytes barray (with-open [out (ByteArrayOutputStream.)]
-                                   (with-open [is (-> (str "public/" fname)
-                                                      io/resource
-                                                      io/input-stream)]
-                                     (io/copy is out))
-                                   (.toByteArray out))
+             (let [baos (ByteArrayOutputStream.)
+                   ^bytes barray (with-open [is (-> (str "public/" fname)
+                                                    io/resource
+                                                    io/input-stream)]
+                                   (io/copy is baos)
+                                   (.toByteArray baos))
                    *width (MemoryUtil/memAllocInt 1)
                    *height (MemoryUtil/memAllocInt 1)
                    *components (MemoryUtil/memAllocInt 1)
