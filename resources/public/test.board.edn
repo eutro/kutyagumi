@@ -7,8 +7,18 @@
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
- [nil #board/cell {:owner :red, :previous #board/wall {:sides #{:left :right}}} nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
- [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil
+  #board/wall {:sides #{:up}}
+  #board/wall {:sides #{:up}}
+  #board/wall {:sides #{:up}}
+  #board/wall {:sides #{:up}}
+  nil nil nil nil nil nil nil]
+ [nil nil nil nil nil nil nil
+  #board/wall {:sides #{:down}}
+  #board/wall {:sides #{:down}}
+  #board/wall {:sides #{:down}}
+  #board/wall {:sides #{:down}}
+  nil nil nil nil nil nil nil]
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
