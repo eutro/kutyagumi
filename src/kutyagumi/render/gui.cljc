@@ -73,11 +73,6 @@
          x, y]
     "Render this element at (x, y)."))
 
-(defn project-to [entity game]
-  (t/project entity
-             (max 1 (p/get-width game))
-             (max 1 (p/get-height game))))
-
 (def color->background
   {:red   [(/ 224 255)
            (/ 161 255)
@@ -103,7 +98,6 @@
          pipeline
          _x, _y]
     (-> blank-sprite
-        (project-to game)
         pipeline
         (->> (c/render game))))
 
@@ -134,7 +128,6 @@
                   sprites)]
       (when sprite
         (-> sprite
-            (project-to game)
             pipeline
             (t/translate 0.125 0.125)
             (t/scale 0.75 0.75)
@@ -152,7 +145,6 @@
          x, y]
     (doseq [side sides]
       (-> ((keyword "wall" (name side)) sprites)
-          (project-to game)
           pipeline
           (->> (c/render game))))
     (draw nil board game pipeline x y)))
@@ -179,22 +171,25 @@
 (defn render [{{:keys [board player]}
                    :state,
                :as game}]
-  (c/render game
-            {:viewport {:x      0
-                        :y      0
-                        :width  (p/get-width game)
-                        :height (p/get-height game)}
-             :clear    {:color (color->background player)
-                        :depth 1}})
+  (let [width (max 1 (p/get-width game))
+        height (max 1 (p/get-height game))]
+    (c/render game
+              {:viewport {:x      0
+                          :y      0
+                          :width  width
+                          :height height}
+               :clear    {:color (color->background player)
+                          :depth 1}})
 
-  (let [[cell-size [offset-x offset-y]] (get-position-info game)]
-    (doseq [x (-> board count range)
-            y (-> board first count range)]
-      (draw (u/nd-nth board x y)
-            board, game
-            #(-> %
-                 (t/translate offset-x offset-y)
-                 (t/scale cell-size cell-size)
-                 (t/translate (seven-eighths x)
-                              (seven-eighths y)))
-            x, y))))
+    (let [[cell-size [offset-x offset-y]] (get-position-info game)]
+      (doseq [x (-> board count range)
+              y (-> board first count range)]
+        (draw (u/nd-nth board x y)
+              board, game
+              #(-> %
+                   (t/project width height)
+                   (t/translate offset-x offset-y)
+                   (t/scale cell-size cell-size)
+                   (t/translate (seven-eighths x)
+                                (seven-eighths y)))
+              x, y)))))
