@@ -22,7 +22,7 @@
                        :delta-time (- ts (:total-time game))
                        :total-time ts)))))))
 
-(defn -main [& args]
+(defn -main [args]
   (let [canvas (js/document.querySelector "canvas")
         context (.getContext canvas "webgl2")
         click-chan (async/chan (async/dropping-buffer 1))
@@ -40,6 +40,5 @@
                                           (.-clientY event)])))
     (async/take! (core/init game args) game-loop)))
 
-(apply -main
-       (string/split (-> js/window .-location .-search (.substring 1))
+(-main (string/split (-> js/window .-location .-search (.substring 1))
                      #"[&=]"))

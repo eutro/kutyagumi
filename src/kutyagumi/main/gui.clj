@@ -67,7 +67,7 @@
     (GLFW/glfwDestroyWindow handle)
     (GLFW/glfwTerminate)))
 
-(defn -main [& args]
+(defn -main [args]
   (let [{:keys [handle] :as window} (->window)]
     (start (pc/->game handle) window args)))
 

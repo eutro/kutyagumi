@@ -44,6 +44,7 @@
                                   id))
 
                       (throw (ex-info "Invalid first argument! Should be \"host\" or \"join\"" {:args args}))))
+                  async/go
                   #?(:cljs async/<!
                      :clj  async/<!!))
                 game)))]
