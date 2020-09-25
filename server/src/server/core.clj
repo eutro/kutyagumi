@@ -5,6 +5,9 @@
            (java.net InetSocketAddress)
            (org.java_websocket WebSocket)))
 
+;; to match the game's protocol version
+(def VERSION "1.0.0")
+
 (defn send-to [^WebSocket socket packet]
   (.send socket (pr-str packet)))
 
@@ -78,13 +81,27 @@
                          connection, host-connection
                          host-connection, connection)
                   (send-to connection
-                    {:type :success}))))
+                    {:type :success
+                     :message (str "Joining game: " \" id \")})
+
+                  (doseq [c [connection host-connection]]
+                    (send-to c (:type :pairing))))))
       (send-to connection
         {:type    :user-error
          :message (str "Nobody is hosting the game: " \" id \")}))
     (send-to connection
       {:type    :error
        :message "No host ID given."})))
+
+(defmethod handle-packet :candidate
+  [connection {:keys [candidate]}]
+  (if-let [pair (@pairs connection)]
+    (send-to pair
+      {:type :candidate
+       :candidate candidate})
+    (send-to connection
+      {:type :error
+       :message "Not paired with anyone."})))
 
 (defmethod handle-packet :offer
   [connection {:keys [offer]}]
@@ -137,7 +154,8 @@
           (onMessage [connection message]
             (on-message connection message))
           (onOpen [connection _handshake]
-            (send-to connection {:type :connected}))
+            (send-to connection {:type :connected
+                                 :version VERSION}))
           (onStart []))]
     (.start server)
     (println "Started server on port:" port)

@@ -16,7 +16,7 @@
 
 (defmethod task "native"
   [_]
-  (gui/-main))
+  (gui/-main (next *command-line-args*)))
 
 (defmethod task "nogui"
   [_]
