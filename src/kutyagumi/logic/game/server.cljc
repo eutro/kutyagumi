@@ -8,6 +8,88 @@
 
 (declare ->ServerLogic)
 
+(defn filter-split [f v]
+  [(filter f v) (filter (complement f) v)])
+
+(defn xor
+  "nil if (and a b) otherwise (or a b)"
+  [a b]
+  (if-not (and a b)
+    (or a b)))
+
+(defn flood-fill
+  "Flood fill cells from the cell at (x, y)."
+  [board player [x, y]]
+  (let [old-cell (util/nd-nth board x y)]
+    (reduce (fn [board [side-to [dx, dy]]]
+              (let [pos [(+ x dx)
+                         (+ y dy)]
+                    [nx, ny] pos
+                    cell (util/nd-nth-else board '__OUT_OF_BOUNDS nx, ny)]
+                (if (= cell '__OUT_OF_BOUNDS)
+                  board
+                  (let [state {:board board
+                               :player player}]
+                    (if (and (board/check-placement cell pos state)
+                             (board/can-place-from old-cell [x, y] side-to state))
+                      (flood-fill (:board (board/do-placement cell pos state))
+                                  player
+                                  pos)
+                      board)))))
+            board
+            board/side->vec)))
+
+(defn flood-fill-player [board player]
+  (reduce (fn [board pos]
+            (flood-fill board player pos))
+          board
+          (for [x (range (-> board count))
+                y (range (-> board first count))
+                :when (= (:owner (util/nd-nth board x y)) player)]
+            [x, y])))
+
+(defn check-victory
+  "Flood fill around each green cell, and for each red cell,
+  then compare if there are any that have been filled by both fills,
+  in order to determine whether there is a winner.
+
+  Returns:
+  [winner, board]"
+  [board]
+  (let [green-fill (flood-fill-player board :green)
+        red-fill (flood-fill-player board :red)
+        [captured, contested]
+        (filter-split
+         first
+         (for [x (range (-> board count))
+               y (range (-> board first count))]
+           [(xor (some-> (util/nd-nth red-fill x, y)
+                         (as-> $ (if (= (:owner $) :red) $))
+                         :owner)
+                 (some-> (util/nd-nth green-fill x, y)
+                         (as-> $ (if (= (:owner $) :green) $))
+                         :owner))
+            [x y]]))
+        new-board
+        (reduce (fn [board [owner [x y]]]
+                  (let [cell (util/nd-nth board
+                                          x, y)]
+                    (if (:owner cell)
+                      board ;; filter out existing cells
+                      (:board (board/do-placement cell
+                                                  [x, y]
+                                                  {:board board
+                                                   :player owner})))))
+                board
+                captured)]
+    [(when-not (seq contested)
+       (let [red-count (count (filter #(= (:owner %) :red) (flatten red-fill)))
+             green-count (count (filter #(= (:owner %) :green) (flatten green-fill)))]
+         (if (> red-count green-count)
+           :red
+           :green)))
+     new-board]))
+
 (defrecord ServerLogic
   [red green]
   GameLogic
@@ -27,11 +109,15 @@
         (if (and (not= '__OUT_OF_BOUNDS
                        cell)
                  (board/check-placement cell [x, y] state))
-          (let [new-state
+          (let [{:keys [board]
+                 :as new-state}
                 (board/do-placement (util/nd-nth board
                                                  x, y)
                                     [x, y]
                                     state)
+
+                [winner new-board] (check-victory board)
+                new-state (assoc new-state :board new-board)
 
                 chan
                 (async/merge [(player/update-state red new-state)
