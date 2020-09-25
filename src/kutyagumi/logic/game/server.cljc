@@ -62,13 +62,15 @@
         (filter-split
          first
          (for [x (range (-> board count))
-               y (range (-> board first count))]
-           [(xor (some-> (util/nd-nth red-fill x, y)
-                         (as-> $ (if (= (:owner $) :red) $))
-                         :owner)
-                 (some-> (util/nd-nth green-fill x, y)
-                         (as-> $ (if (= (:owner $) :green) $))
-                         :owner))
+               y (range (-> board first count))
+               :let [r-acc (some-> (util/nd-nth red-fill x, y)
+                                   (as-> $ (if (= (:owner $) :red) $))
+                                   :owner)
+                     g-acc (some-> (util/nd-nth green-fill x, y)
+                                   (as-> $ (if (= (:owner $) :green) $))
+                                   :owner)]
+               :when (or r-acc g-acc)]
+           [(xor r-acc g-acc)
             [x y]]))
         new-board
         (reduce (fn [board [owner [x y]]]
@@ -117,7 +119,7 @@
                                     state)
 
                 [winner new-board] (check-victory board)
-                new-state (assoc new-state :board new-board)
+                new-state (assoc new-state :board new-board, :winner winner)
 
                 chan
                 (async/merge [(player/update-state red new-state)

@@ -3,6 +3,7 @@
             [kutyagumi.misc.util :as u]
             [kutyagumi.misc.platform :as p]
             [clojure.core.async :as async]
+            [clojure.string :as string]
             [play-cljc.gl.core :as c]
             [play-cljc.gl.entities-2d :as e]
             [play-cljc.transforms :as t]
@@ -168,7 +169,7 @@
      [(/ (- width (* board-width shrunk)) 2)
       (/ (- height (* board-height shrunk)) 2)]]))
 
-(defn render [{{:keys [board player]}
+(defn render [{{:keys [board player winner]}
                    :state,
                :as game}]
   (let [width (max 1 (p/get-width game))
@@ -192,4 +193,8 @@
                    (t/scale cell-size cell-size)
                    (t/translate (seven-eighths x)
                                 (seven-eighths y)))
-              x, y)))))
+              x, y)))
+
+    (when winner
+      ;; TODO make this a proper display
+      #?(:cljs (js/alert (str (string/capitalize (name winner)) " victory!"))))))
