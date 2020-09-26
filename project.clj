@@ -1,5 +1,5 @@
 (defproject kutyagumi-server "0.1.0"
-  :min-lein-version "2.9.4"
+  :min-lein-version "2.0.0"
   :description "A simple server for Kutyagumi."
   :url "https://github.com/eutropius225/kutyagumi"
   :license {:name "MIT"}
