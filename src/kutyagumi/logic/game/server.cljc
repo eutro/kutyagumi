@@ -101,7 +101,8 @@
                   :as   state}
                      :state,
                  :as game}]
-    (async/go
+    (async/go-loop []
+      (println (player this))
       (let [[x y]
             (-> this
                 player
@@ -120,14 +121,10 @@
                                     state)
 
                 [winner new-board] (check-victory board)
-                new-state (assoc new-state :board new-board, :winner winner)
-
-                chan
-                (async/merge [(player/update-state red new-state)
-                              (player/update-state green new-state)])]
+                new-state (assoc new-state :board new-board, :winner winner)]
             (assoc game
               :state new-state
               :logic (->ServerLogic
-                       (async/<! chan)
-                       (async/<! chan))))
-          game)))))
+                       (async/<! (player/update-state red new-state))
+                       (async/<! (player/update-state green new-state)))))
+          (recur))))))
