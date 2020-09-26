@@ -9,32 +9,36 @@
             [kutyagumi.logic.game.core :as game])
   #?(:clj (:import (kutyagumi.logic.game.core GameLogic))))
 
-(def readers
-  {'logic/board.LivingCell board/map->LivingCell
-   'logic/board.Wall       board/map->Wall
-   'logic/game.core.State  game/map->State})
+(def opts
+  {:readers
+   {'logic/board.LivingCell board/map->LivingCell
+    'logic/board.Wall       board/map->Wall
+    'logic/game.core.State  game/map->State}})
 
-(defn parse-state
+(defn read-packet
   [payload-string]
-  (edn/read-string {:readers readers}
-                   (string/replace payload-string
-                                   #"#kutyagumi\.logic\."
-                                   "#logic/")))
+  (edn/read-string
+    opts
+    (string/replace payload-string
+                    #"#kutyagumi\.logic\."
+                    "#logic/")))
 
 (defrecord
   ^{:doc
-    "Represents a game as seen by a client.
-
-    Note that the client player is always green."}
+    "Represents a game as seen by a client."}
   ClientLogic
   [player in out]
   GameLogic
-  (update-game [_ {{turn :player} :state
-                   :as game}]
-    (async/go
-      (when (= turn :green)
-        (async/>! out (async/<! (player/next-move player game))))
-      (assoc game :state (parse-state (async/<! in))))))
+  (update-game [_ game]
+    (async/go-loop []
+      (let [{:keys [type]
+             :as packet}
+            (read-packet (async/<! in))]
+        (println packet)
+        (case type
+          :move (do (async/>! out (async/<! (player/next-move player game)))
+                    (recur))
+          :sync (assoc game :state (:state packet)))))))
 
 (defn ->client-logic [player id]
   (async/go

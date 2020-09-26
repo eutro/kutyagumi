@@ -8,10 +8,13 @@
 (defrecord RemotePlayer [in out]
   Player
   (next-move [_ _game]
-    (async/go (edn/read-string (async/<! in))))
+    (async/go
+      (async/>! out {:type :move})
+      (edn/read-string (async/<! in))))
   (update-state [this state]
     (async/go
-      (async/>! out state)
+      (async/>! out {:type  :sync
+                     :state state})
       (while (async/poll! in))
       this)))
 
@@ -19,5 +22,6 @@
   (async/go
     (let [[in out] (async/<! (nw/make-connection :host id))]
       (assert (and in out) "Failed to make connection!")
-      (async/>! out state)
+      (async/>! out {:type  :sync
+                     :state state})
       (->RemotePlayer in out))))

@@ -126,7 +126,4 @@
               :logic (->ServerLogic
                        (async/<! (player/update-state red new-state))
                        (async/<! (player/update-state green new-state)))))
-          (assoc game
-            :logic (->ServerLogic
-                     (async/<! (player/update-state red state))
-                     (async/<! (player/update-state green state)))))))))
+          (recur))))))
