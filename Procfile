@@ -1,1 +1,1 @@
-web: lein uberjar && java -jar target/kutyagumi-server-standalone.jar
+web: lein uberjar && java $JVM_OPTS -jar target/kutyagumi-server-standalone.jar $PORT
