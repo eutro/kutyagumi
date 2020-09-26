@@ -34,7 +34,6 @@
       (let [{:keys [type]
              :as packet}
             (read-packet (async/<! in))]
-        (println packet)
         (case type
           :move (do (async/>! out (async/<! (player/next-move player game)))
                     (recur))
