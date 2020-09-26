@@ -92,8 +92,13 @@
       (let [{:keys [type message]}
             (async/<! server-message-chan)]
         (case type
-          (:user-error :error) (throw-and-close server-connection message)
-          :success (println message)
+          :user-error (-> message
+                          #?(:cljs js/alert
+                             :clj  throw-and-close))
+          :error (throw-and-close server-connection message)
+          :success (#?(:clj println
+                       :cljs js/alert)
+                     message)
           (throw-and-close server-connection
                            (str "Unexpected packet type: " type))))
 
@@ -109,12 +114,19 @@
                 (case type
                   :from-peer (async/>! in-chan (:payload packet))
 
-                  (:error :user-error)
+                  :user-error
+                  (-> (:message packet)
+                      #?(:cljs js/alert
+                         :clj  throw-and-close))
+
+                  :error
                   (throw-and-close server-connection (:message packet))
 
                   ;; TODO idk maybe handle this more gracefully
                   :disconnect
-                  (throw-and-close server-connection "Disconnected.")
+                  (let [m "Opponent disconnected."]
+                    #?(:cljs (js/alert m))
+                    (throw-and-close server-connection m))
 
                   (throw-and-close server-connection (str "Unexpected packet type: " type))))
               (recur))
