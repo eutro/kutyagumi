@@ -4,7 +4,7 @@ A simple server for Kutyagumi.
 
 ## Running
 
-To run, you will need Java and an SSL certificate.
+To run, you will need Java.
 
 Then run with arguments:
 
