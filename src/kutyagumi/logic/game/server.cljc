@@ -28,7 +28,7 @@
                     cell (util/nd-nth-else board '__OUT_OF_BOUNDS nx, ny)]
                 (if (= cell '__OUT_OF_BOUNDS)
                   board
-                  (let [state {:board board
+                  (let [state {:board  board
                                :player player}]
                     (if (and (board/check-placement cell pos state)
                              (board/can-place-from old-cell [x, y] side-to state))
@@ -58,29 +58,30 @@
   [board]
   (let [green-fill (flood-fill-player board :green)
         red-fill (flood-fill-player board :red)
-        [captured, contested]
+        f-split
         (filter-split
-         first
-         (for [x (range (-> board count))
-               y (range (-> board first count))
-               :let [r-acc (some-> (util/nd-nth red-fill x, y)
-                                   (as-> $ (if (= (:owner $) :red) $))
-                                   :owner)
-                     g-acc (some-> (util/nd-nth green-fill x, y)
-                                   (as-> $ (if (= (:owner $) :green) $))
-                                   :owner)]
-               :when (or r-acc g-acc)]
-           [(xor r-acc g-acc)
-            [x y]]))
+          first
+          (for [x (range (-> board count))
+                y (range (-> board first count))
+                :let [r-acc (some-> (util/nd-nth red-fill x, y)
+                                    (as-> $ (if (= (:owner $) :red) $))
+                                    :owner)
+                      g-acc (some-> (util/nd-nth green-fill x, y)
+                                    (as-> $ (if (= (:owner $) :green) $))
+                                    :owner)]
+                :when (or r-acc g-acc)]
+            [(xor r-acc g-acc)
+             [x y]]))
+        [captured, contested] f-split
         new-board
         (reduce (fn [board [owner [x y]]]
                   (let [cell (util/nd-nth board
                                           x, y)]
                     (if (:owner cell)
-                      board ;; filter out existing cells
+                      board                                 ;; filter out existing cells
                       (:board (board/do-placement cell
                                                   [x, y]
-                                                  {:board board
+                                                  {:board  board
                                                    :player owner})))))
                 board
                 captured)]
@@ -100,7 +101,7 @@
                   :as   state}
                      :state,
                  :as game}]
-    (async/go
+    (async/go-loop []
       (let [[x y]
             (-> this
                 player
@@ -112,21 +113,17 @@
                        cell)
                  (board/check-placement cell [x, y] state))
           (let [{:keys [board]
-                 :as new-state}
+                 :as   new-state}
                 (board/do-placement (util/nd-nth board
                                                  x, y)
                                     [x, y]
                                     state)
 
                 [winner new-board] (check-victory board)
-                new-state (assoc new-state :board new-board, :winner winner)
-
-                chan
-                (async/merge [(player/update-state red new-state)
-                              (player/update-state green new-state)])]
+                new-state (assoc new-state :board new-board, :winner winner)]
             (assoc game
               :state new-state
               :logic (->ServerLogic
-                       (async/<! chan)
-                       (async/<! chan))))
-          game)))))
+                       (async/<! (player/update-state red new-state))
+                       (async/<! (player/update-state green new-state)))))
+          (recur))))))

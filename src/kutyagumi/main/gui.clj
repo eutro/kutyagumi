@@ -28,14 +28,14 @@
         (->Window window))
     (throw (Exception. "Failed to create window"))))
 
-(defn start [game {:keys [handle]}]
+(defn start [game {:keys [handle]} args]
   (let [mouse-pos (atom [0, 0])
         click-chan (async/chan (async/dropping-buffer 1))
         game (assoc game
                :delta-time 0
                :total-time (GLFW/glfwGetTime)
                :clicks click-chan)
-        game (core/init game)]
+        game ((async/<!! (core/init game args)))]
     (doto handle
       (GLFW/glfwShowWindow)
       (GLFW/glfwSetWindowCloseCallback
@@ -67,7 +67,7 @@
     (GLFW/glfwDestroyWindow handle)
     (GLFW/glfwTerminate)))
 
-(defn -main [& _args]
+(defn -main [args]
   (let [{:keys [handle] :as window} (->window)]
-    (start (pc/->game handle) window)))
+    (start (pc/->game handle) window args)))
 

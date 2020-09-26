@@ -7,27 +7,22 @@
             [play-cljc.gl.core :as c]
             [play-cljc.gl.entities-2d :as e]
             [play-cljc.transforms :as t]
-            #?(:clj  [play-cljc.macros-java :refer [gl math]]
-               :cljs [play-cljc.macros-js :refer-macros [gl math]]))
+            #?@(:clj  [[play-cljc.macros-java :refer [gl math]]]
+                :cljs [[play-cljc.macros-js :refer-macros [gl math]]
+                       [clojure.core.async :refer-macros [go]]]))
   #?(:clj (:import (kutyagumi.logic.board LivingCell Wall)
                    (org.lwjgl.glfw GLFW))))
 
-(defn init [game]
-  (#?(:cljs async/go
-      :clj  do)
-    (gl game "enable"
-        (gl game "BLEND"))
-    (gl game "blendFunc"
-        (gl game "SRC_ALPHA")
-        (gl game "ONE_MINUS_SRC_ALPHA"))
-    (gl game "enable"
-        (gl game "DEPTH_TEST"))
-
-    (assoc game
-      ::assets
-      (reduce
-        #(%2 %1) {}
-        (->
+(defn init
+  "Yields a channel that returns a
+  function to run on the main thread
+  to retrieve the new game."
+  [game]
+  (async/go
+    (let [functions
+          ;; these are to reduce by successive application
+          ;; to a map, but it has to run on the main thread
+          ;; on the JVM.
           (loop [assets (-> "assets/assets.edn" p/get-edn async/<!)
                  ret nil]
             (if-not (seq assets)
@@ -52,21 +47,30 @@
                           (fn [resources]
                             (assoc resources
                               k
-                              {:meta metadata
+                              {:meta
+                               metadata
                                :sprites
-                                     (into {}
-                                           (let [entity (c/compile game uncompiled)]
-                                             (for [x (range (quot tex-width sprite-width))
-                                                   y (range (quot tex-height sprite-height))]
-                                               (when-some [sprite-key
-                                                           (u/nd-nth-else sprites nil
-                                                                          y, x)]
-                                                 [sprite-key
-                                                  (t/crop entity
-                                                          (* x sprite-width), (* y sprite-height)
-                                                          sprite-width, sprite-height)]))))}))))))))
-          #?@(:cljs [do]
-              :clj  [async/go async/<!!]))))))
+                               (into {}
+                                     (let [entity (c/compile game uncompiled)]
+                                       (for [x (range (quot tex-width sprite-width))
+                                             y (range (quot tex-height sprite-height))]
+                                         (when-some [sprite-key
+                                                     (u/nd-nth-else sprites nil
+                                                                    y, x)]
+                                           [sprite-key
+                                            (t/crop entity
+                                                    (* x sprite-width), (* y sprite-height)
+                                                    sprite-width, sprite-height)]))))}))))))))]
+      (fn []
+        (gl game "enable"
+            (gl game "BLEND"))
+        (gl game "blendFunc"
+            (gl game "SRC_ALPHA")
+            (gl game "ONE_MINUS_SRC_ALPHA"))
+        (gl game "enable"
+            (gl game "DEPTH_TEST"))
+        (assoc game
+          ::assets (reduce #(%2 %1) {} functions))))))
 
 (defprotocol GuiRenderable
   (draw [this board game

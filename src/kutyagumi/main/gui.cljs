@@ -2,7 +2,8 @@
   (:require [kutyagumi.main.core :as core]
             [play-cljc.gl.core :as pc]
             [cljs.core.async :as async]
-            [goog.events :as events]))
+            [goog.events :as events]
+            [clojure.string :as string]))
 
 (defn msec->sec [n]
   (* 0.001 n))
@@ -21,7 +22,7 @@
                        :delta-time (- ts (:total-time game))
                        :total-time ts)))))))
 
-(defn -main [& _args]
+(defn -main [args]
   (let [canvas (js/document.querySelector "canvas")
         context (.getContext canvas "webgl2")
         click-chan (async/chan (async/dropping-buffer 1))
@@ -35,8 +36,11 @@
       (fn [_] (resize context)))
     (events/listen
       js/window "click"
-      (fn [event] (async/put! click-chan [(.-clientX event)
-                                          (.-clientY event)])))
-    (async/take! (core/init game) game-loop)))
+      (fn [event]
+        (async/put! click-chan
+                    [(.-clientX event)
+                     (.-clientY event)])))
+    (async/take! (core/init game args) #(game-loop (%)))))
 
-(-main)
+(-main (let [query (-> js/window .-location .-search (.substring 1) js/decodeURI)]
+         (when (seq query) (string/split query #"[&=]"))))
