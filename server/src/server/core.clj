@@ -3,7 +3,7 @@
   (:require [clojure.edn :as edn])
   (:import (org.java_websocket.server WebSocketServer)
            (java.net InetSocketAddress)
-           (org.java_websocket WebSocket)))
+           (org.java_websocket WebSocket WebSocketImpl)))
 
 ;; to match the game's protocol version
 (def VERSION "1.0.0")
@@ -83,7 +83,7 @@
                          connection, host-connection
                          host-connection, connection)
                   (send-to connection
-                    {:type :success
+                    {:type    :success
                      :message (str "Joining game: " \" id \")})
 
                   (doseq [c [connection host-connection]]
@@ -102,7 +102,7 @@
       {:type    :from-peer
        :payload payload})
     (send-to connection
-      {:type :error
+      {:type    :error
        :message "Not paired with anyone."})))
 
 (defn on-message [connection message]
@@ -125,9 +125,9 @@
     (send-to pair
       {:type :disconnect})))
 
-(defn -main [& args]
-  (let [port (try (Integer/parseInt (first args))
-                  (catch NumberFormatException _ 4892))
+(defn -main [& [port]]
+  (let [port (try (Integer/parseInt port)
+                  (catch NumberFormatException _ WebSocketImpl/DEFAULT_PORT))
         server
         (proxy [WebSocketServer] [(InetSocketAddress. port)]
           (onClose [connection _code _reason _remote]
@@ -137,7 +137,7 @@
           (onMessage [connection message]
             (on-message connection message))
           (onOpen [connection _handshake]
-            (send-to connection {:type :connected
+            (send-to connection {:type    :connected
                                  :version VERSION}))
           (onStart []))]
     (.start server)
