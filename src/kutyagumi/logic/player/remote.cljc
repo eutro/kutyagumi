@@ -18,9 +18,9 @@
       (while (async/poll! in))
       this)))
 
-(defn ->remote-player [id state]
+(defn ->remote-player [id state uri]
   (async/go
-    (let [[in out] (async/<! (nw/make-connection :host id))]
+    (let [[in out] (async/<! (nw/make-connection uri :host id))]
       (assert (and in out) "Failed to make connection!")
       (async/>! out {:type  :sync
                      :state state})

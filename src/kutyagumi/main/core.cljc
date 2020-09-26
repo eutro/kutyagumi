@@ -6,6 +6,7 @@
             [kutyagumi.misc.map-reader :as mr]
             [kutyagumi.logic.player.gui :as gp]
             [kutyagumi.logic.player.remote :as rp]
+            [kutyagumi.misc.platform :as platform]
             [clojure.core.async :as async]))
 
 (defn init
@@ -14,32 +15,36 @@
   to retrieve the new game."
   [old-game args]
   (async/go
-    (let [[host-or-join id & _] args
-          _ (if (and host-or-join (not id))
-              (throw (ex-info "No game ID supplied!" {:args args})))
+    (assert (even? (count args))
+            "Argument count must be even!")
+    (let [opts (apply assoc {} args)
           state (game/->State
                   (async/<! (mr/pick-board))
                   :red)
           new-game
           (game/->Game
             state
-            (case host-or-join
-              nil
+            (cond
+              (get opts "host")
               (server/->ServerLogic
                 (gp/->GuiPlayer)
-                (gp/->GuiPlayer))
+                (async/<! (rp/->remote-player
+                            (get opts "host")
+                            state
+                            (or (get opts "server")
+                                (async/<! (platform/get-edn "config/server.edn"))))))
 
-              "host"
-              (server/->ServerLogic
-                (gp/->GuiPlayer)
-                (async/<! (rp/->remote-player id state)))
-
-              "join"
+              (get opts "join")
               (async/<! (client/->client-logic
                           (gp/->GuiPlayer)
-                          id))
+                          (get opts "join")
+                          (or (get opts "server")
+                              (async/<! (platform/get-edn "config/server.edn")))))
 
-              (throw (ex-info "Invalid first argument! Should be \"host\" or \"join\"" {:args args}))))
+              :else
+              (server/->ServerLogic
+                (gp/->GuiPlayer)
+                (gp/->GuiPlayer))))
           gui-thunk (async/<! (gui/init (merge new-game old-game)))]
       (fn []
         (let [{:keys [logic]

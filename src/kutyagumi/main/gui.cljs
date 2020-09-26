@@ -42,5 +42,5 @@
                      (.-clientY event)])))
     (async/take! (core/init game args) #(game-loop (%)))))
 
-(-main (let [query (-> js/window .-location .-search (.substring 1))]
+(-main (let [query (-> js/window .-location .-search (.substring 1) js/decodeURI)]
          (when (seq query) (string/split query #"[&=]"))))

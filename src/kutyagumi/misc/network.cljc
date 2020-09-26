@@ -8,11 +8,6 @@
 
 ;; to match the server version
 (def ^:private VERSION "1.0.0")
-(def ^:private SERVER_URI* (async/promise-chan))
-
-(async/take! (platform/get-edn "config/server.edn")
-  (fn [uri] (async/put! SERVER_URI* #?(:clj  (URI. uri)
-                                       :cljs uri))))
 
 (defn- send-to
   #?(:clj  ([^WebSocketClient connection packet]
@@ -34,11 +29,11 @@
 
   Returns two async channels:
   [in-chan out-chan]"
-  [host-or-join id]
+  [uri host-or-join id]
   (async/go
     (let [server-message-chan (async/chan)
           server-connection
-          #?(:clj (doto (proxy [WebSocketClient] [(async/<! SERVER_URI*)]
+          #?(:clj (doto (proxy [WebSocketClient] [(URI. uri)]
                           (onClose [code reason remote]
                             (println "Connection to server closed."
                                      "Remote?" remote
@@ -52,7 +47,7 @@
                           (onOpen [^ServerHandshake handshake]
                             (println "Connected to server:" (.getHttpStatusMessage handshake))))
                     (.connect))
-             :cljs (doto (js/WebSocket. (async/<! SERVER_URI*))
+             :cljs (doto (js/WebSocket. uri)
                      (-> .-onclose
                          (set!
                            (fn [event]
