@@ -2,24 +2,31 @@
   (:require [kutyagumi.misc.platform :as platform]
             [clojure.core.async :as async]
             [clojure.edn :as edn])
-  (:import (org.java_websocket.client WebSocketClient)
-           (java.net URI)
-           (org.java_websocket.handshake ServerHandshake)))
+  #?(:clj (:import (org.java_websocket.client WebSocketClient)
+                   (java.net URI)
+                   (org.java_websocket.handshake ServerHandshake))))
 
 ;; to match the server version
 (def ^:private VERSION "1.0.0")
-(def ^:private SERVER_URI* (promise))
+(def ^:private SERVER_URI* (async/promise-chan))
 
 (async/take! (platform/get-edn "config/server.edn")
-  (fn [uri] (deliver SERVER_URI* (URI. uri))))
+  (fn [uri] (async/put! SERVER_URI* #?(:clj  (URI. uri)
+                                       :cljs uri))))
 
 (defn- send-to
-  [^WebSocketClient connection packet]
-  (.send connection (pr-str packet)))
+  #?(:clj  ([^WebSocketClient connection packet]
+            (.send connection (pr-str packet)))
+     :cljs ([connection packet]
+            (.send connection (pr-str packet)))))
 
-(defn- throw-and-close [^WebSocketClient c ex]
-  (.close c)
-  (throw (RuntimeException. (str ex))))
+(defn- throw-and-close
+  #?(:clj  ([^WebSocketClient c ex]
+            (.close c)
+            (throw (RuntimeException. (str ex))))
+     :cljs ([c ex]
+            (.close c)
+            (throw (str ex)))))
 
 (defn make-connection
   "host-or-join: :host or :join
@@ -28,32 +35,52 @@
   Returns two async channels:
   [in-chan out-chan]"
   [host-or-join id]
-  (let [server-message-chan (async/chan)
-        server-connection
-        (proxy [WebSocketClient] [@SERVER_URI*]
-          (onClose [code reason remote]
-            (println "Connection to server closed."
-                     "Remote?" remote
-                     "Code:" code
-                     "Reason:" reason))
-          (onError [ex]
-            (.printStackTrace ex))
-          (onMessage [message]
-            (some->> (edn/read-string message)
-                     (async/>!! server-message-chan)))
-          (onOpen [^ServerHandshake handshake]
-            (println "Connected to server:" (.getHttpStatusMessage handshake))))]
-    (.connect server-connection)
-    (async/go
+  (async/go
+    (let [server-message-chan (async/chan)
+          server-connection
+          #?(:clj (doto (proxy [WebSocketClient] [(async/<! SERVER_URI*)]
+                          (onClose [code reason remote]
+                            (println "Connection to server closed."
+                                     "Remote?" remote
+                                     "Code:" code
+                                     "Reason:" reason))
+                          (onError [ex]
+                            (.printStackTrace ex))
+                          (onMessage [message]
+                            (some->> (edn/read-string message)
+                                     (async/put! server-message-chan)))
+                          (onOpen [^ServerHandshake handshake]
+                            (println "Connected to server:" (.getHttpStatusMessage handshake))))
+                    (.connect))
+             :cljs (doto (js/WebSocket. (async/<! SERVER_URI*))
+                     (.onclose
+                       (fn [event]
+                         (println "Connection to server closed."
+                                  "Code:" (.-code event)
+                                  "Reason:" (.-reason event))))
+                     (.onerror
+                       (fn [event]
+                         (js/console.error "WebSocket Error:" event)))
+                     (.onmessage
+                       (fn [event]
+                         (some->> (edn/read-string (.-data event))
+                                  (async/put! server-message-chan))))
+                     (.onopen
+                       (fn [event]
+                         (js/console.info "Connected to server:" event)))))]
       (let [{:keys [type version]} (async/<! server-message-chan)]
         (when-not (= type :connected)
           (throw-and-close server-connection
                            (str "Unexpected " type " packet. Expected :connected")))
         (when-not (= version VERSION)
           (throw-and-close server-connection
-                           (format "Version mismatch. Server: %s, client: %s."
-                                   version
-                                   VERSION))))
+                           (str "Version mismatch. "
+                                "Server: "
+                                version
+                                ", "
+                                "client: "
+                                VERSION
+                                \.))))
       (send-to server-connection
         {:type host-or-join
          :id   id})

@@ -35,7 +35,7 @@
                :delta-time 0
                :total-time (GLFW/glfwGetTime)
                :clicks click-chan)
-        game (core/init game args)]
+        game ((async/<!! (core/init game args)))]
     (doto handle
       (GLFW/glfwShowWindow)
       (GLFW/glfwSetWindowCloseCallback
