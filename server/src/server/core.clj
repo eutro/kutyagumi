@@ -1,17 +1,19 @@
 (ns server.core
   (:gen-class)
-  (:require [clojure.edn :as edn])
-  (:import (org.java_websocket.server WebSocketServer)
-           (java.net InetSocketAddress)
-           (org.java_websocket WebSocket WebSocketImpl)))
+  (:require [clojure.edn :as edn]
+            [immutant.web :as web]
+            [immutant.web.async :as async]
+            [immutant.web.middleware :as web-middleware]
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.util.response :refer [redirect]]))
 
 ;; to match the game's protocol version
 (def VERSION "1.0.0")
 (def LOG_PACKETS false)
 
-(defn send-to [^WebSocket socket packet]
+(defn send-to [socket packet]
   (when LOG_PACKETS (print "> ") (prn packet))
-  (.send socket (pr-str packet)))
+  (async/send! socket (pr-str packet)))
 
 ;; I sure do hope I don't get memory leaks
 (def id->host* (atom {}))
@@ -127,20 +129,26 @@
 
 (defn -main [& [port]]
   (let [port (try (Integer/parseInt port)
-                  (catch NumberFormatException _ WebSocketImpl/DEFAULT_PORT))
-        server
-        (proxy [WebSocketServer] [(InetSocketAddress. port)]
-          (onClose [connection _code _reason _remote]
-            (on-close connection))
-          (onError [_connection exception]
-            (.printStackTrace exception))
-          (onMessage [connection message]
-            (on-message connection message))
-          (onOpen [connection _handshake]
-            (send-to connection {:type    :connected
-                                 :version VERSION}))
-          (onStart []))]
-    (.start server)
-    (println "Started server on port:" port)
+                  (catch NumberFormatException _ 80))]
+    (web/run
+      (-> (fn [{c :context}] (redirect (str c "/index.html")))
+          (wrap-resource "public")
+          (web-middleware/wrap-websocket
+            {:on-close
+             (fn [connection _code_and_reason]
+               (on-close connection))
+             :on-error
+             (fn [_connection exception]
+               (.printStackTrace exception))
+             :on-message
+             (fn [connection message]
+               (on-message connection message))
+             :on-open
+             (fn [connection]
+               (send-to connection
+                 {:type    :connected
+                  :version VERSION}))}))
+      {"port" port})
     ;; await EOF
+    (println "Started server on port:" port)
     (while (not= -1 (.read System/in)))))
