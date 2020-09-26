@@ -1,0 +1,27 @@
+name: Deploy Server
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Deploy Server
+        run: |
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "Automation"
+          cp -r server ../out
+          git switch server-deploy
+          rm -r *
+          mv ../out/* ./
+          git add -u
+          git add -v *
+          git diff --staged --quiet && echo "No changes." || git commit -a -v -m "Deploy Server" && git push -v
