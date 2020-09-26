@@ -41,7 +41,7 @@ jobs:
       run: |
         git switch gh-pages
         rm -r *
-        cp ../out/resources/public/* ./
+        cp -r ../out/resources/public/* ./
         git add -u
         git add -v *
         git diff --staged --quiet && echo "No changes." || git commit -a -v -m "Build Pages" && git push -v
@@ -50,7 +50,7 @@ jobs:
       run: |
         git switch server-deploy
         rm -r *
-        cp ../out/* ./
+        cp -r ../out/* ./
         git add -u
         git add -v *
         git diff --staged --quiet && echo "No changes." || git commit -a -v -m "Deploy Server" && git push -v
