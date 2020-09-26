@@ -53,21 +53,25 @@
                             (println "Connected to server:" (.getHttpStatusMessage handshake))))
                     (.connect))
              :cljs (doto (js/WebSocket. (async/<! SERVER_URI*))
-                     (.onclose
-                       (fn [event]
-                         (println "Connection to server closed."
-                                  "Code:" (.-code event)
-                                  "Reason:" (.-reason event))))
-                     (.onerror
-                       (fn [event]
-                         (js/console.error "WebSocket Error:" event)))
-                     (.onmessage
-                       (fn [event]
-                         (some->> (edn/read-string (.-data event))
-                                  (async/put! server-message-chan))))
-                     (.onopen
-                       (fn [event]
-                         (js/console.info "Connected to server:" event)))))]
+                     (-> .-onclose
+                         (set!
+                           (fn [event]
+                             (println "Connection to server closed."
+                                      "Code:" (.-code event)
+                                      "Reason:" (.-reason event)))))
+                     (-> .-onerror
+                         (set!
+                           (fn [event]
+                             (js/console.error "WebSocket Error:" event))))
+                     (-> .-onmessage
+                         (set!
+                           (fn [event]
+                             (some->> (edn/read-string (.-data event))
+                                      (async/put! server-message-chan)))))
+                     (-> .-onopen
+                         (set!
+                           (fn [event]
+                             (js/console.info "Connected to server:" event))))))]
       (let [{:keys [type version]} (async/<! server-message-chan)]
         (when-not (= type :connected)
           (throw-and-close server-connection
