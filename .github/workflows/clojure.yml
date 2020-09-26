@@ -26,6 +26,8 @@ jobs:
 
     - name: Copy Files
       run: |
+        mkdir ../out
+        mkdir ../out/resources
         mkdir ../out/resources/public
         cp -r resources/public ../out/resources/public
         cp -r server ../out
