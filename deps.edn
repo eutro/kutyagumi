@@ -1,32 +1,33 @@
-{:paths ["src" "resources" "run"]
- :deps {org.clojure/clojure {:mvn/version "1.10.1"}
-        org.clojure/core.async {:mvn/version "1.3.610"}}
- :aliases {:dev {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
-                              com.bhauman/figwheel-main {:mvn/version "0.2.9"}
-                              orchestra {:mvn/version "2018.12.06-2"}
-                              expound {:mvn/version "0.7.2"}
-                              paravim {:mvn/version "RELEASE"}}
-                 :main-opts ["run/dev.clj"]}
-           :prod {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
-                               leiningen {:mvn/version "2.9.0"}}
-                  :main-opts ["run/prod.clj"]}
-           :macos {:jvm-opts ["-XstartOnFirstThread"]}
+{:paths   ["src" "resources" "run"]
+ :deps    {org.clojure/clojure               {:mvn/version "1.10.1"}
+           org.clojure/core.async            {:mvn/version "1.3.610"}
+           org.java-websocket/Java-WebSocket {:mvn/version "1.5.1"}}
+ :aliases {:dev       {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
+                                    com.bhauman/figwheel-main {:mvn/version "0.2.9"}
+                                    orchestra                 {:mvn/version "2018.12.06-2"}
+                                    expound                   {:mvn/version "0.7.2"}
+                                    paravim                   {:mvn/version "RELEASE"}}
+                       :main-opts  ["run/dev.clj"]}
+           :prod      {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
+                                    leiningen                 {:mvn/version "2.9.0"}}
+                       :main-opts  ["run/prod.clj"]}
+           :macos     {:jvm-opts ["-XstartOnFirstThread"]}
            ;; these deps are not necessary during development
            ;; because paravim already brings them in
-           :play-cljc {:extra-deps {play-cljc {:mvn/version "0.9.4"}
-                                    org.lwjgl/lwjgl {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-glfw {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-opengl {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-stb {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl$natives-linux {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-glfw$natives-linux {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-opengl$natives-linux {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-stb$natives-linux {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl$natives-macos {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-glfw$natives-macos {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-opengl$natives-macos {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-stb$natives-macos {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl$natives-windows {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-glfw$natives-windows {:mvn/version "3.2.3"}
+           :play-cljc {:extra-deps {play-cljc                              {:mvn/version "0.9.4"}
+                                    org.lwjgl/lwjgl                        {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-glfw                   {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-opengl                 {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-stb                    {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl$natives-linux          {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-glfw$natives-linux     {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-opengl$natives-linux   {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-stb$natives-linux      {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl$natives-macos          {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-glfw$natives-macos     {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-opengl$natives-macos   {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-stb$natives-macos      {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl$natives-windows        {:mvn/version "3.2.3"}
+                                    org.lwjgl/lwjgl-glfw$natives-windows   {:mvn/version "3.2.3"}
                                     org.lwjgl/lwjgl-opengl$natives-windows {:mvn/version "3.2.3"}
-                                    org.lwjgl/lwjgl-stb$natives-windows {:mvn/version "3.2.3"}}}}}
+                                    org.lwjgl/lwjgl-stb$natives-windows    {:mvn/version "3.2.3"}}}}}
