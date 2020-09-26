@@ -17,11 +17,12 @@
     (let [[host-or-join id & _] args
           _ (if (and host-or-join (not id))
               (throw (ex-info "No game ID supplied!" {:args args})))
+          state (game/->State
+                  (async/<! (mr/pick-board))
+                  :red)
           new-game
           (game/->Game
-            (game/->State
-              (async/<! (mr/pick-board))
-              :red)
+            state
             (case host-or-join
               nil
               (server/->ServerLogic
@@ -31,10 +32,10 @@
               "host"
               (server/->ServerLogic
                 (gp/->GuiPlayer)
-                (async/<! (rp/->remote-player id)))
+                (async/<! (rp/->remote-player id state)))
 
               "join"
-              (async/<! (client/->client-game
+              (async/<! (client/->client-logic
                           (gp/->GuiPlayer)
                           id))
 

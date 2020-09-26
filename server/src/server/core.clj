@@ -7,9 +7,10 @@
 
 ;; to match the game's protocol version
 (def VERSION "1.0.0")
+(def LOG_PACKETS false)
 
 (defn send-to [^WebSocket socket packet]
-  (print "> ") (prn packet)
+  (when LOG_PACKETS (print "> ") (prn packet))
   (.send socket (pr-str packet)))
 
 ;; I sure do hope I don't get memory leaks
@@ -111,7 +112,7 @@
                      (send-to connection
                        {:type    :error
                         :message (str "Malformed EDN: " (.getMessage e))})))]
-    (print "< ") (prn packet)
+    (when LOG_PACKETS (print "< ") (prn packet))
     (handle-packet connection packet)))
 
 (defn on-close [connection]

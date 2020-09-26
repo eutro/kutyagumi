@@ -26,18 +26,20 @@
     "Represents a game as seen by a client.
 
     Note, that the client player is always green."}
-  ClientGame
+  ClientLogic
   [player in out]
   GameLogic
-  (update-game [_ {{next-player :player}
-                       :state
-                   :as game}]
-    (async/go
-      (when (= :green next-player)
-        (async/>! out (async/<! (player/next-move player game))) game)
-      (assoc game :state (parse-state (async/<! in))))))
+  (update-game [_ game]
+    (async/go-loop []
+      (let [[val port]
+            (async/alts! [in (player/next-move player game)])]
+        (if (= port in)
+          (assoc game :state (parse-state val))
+          (do (async/>! out val)
+              (recur)))))))
 
-(defn ->client-game [player id]
+(defn ->client-logic [player id]
   (async/go
     (let [[in out] (async/<! (nw/make-connection :join id))]
-      (->ClientGame player in out))))
+      (assert (and in out) "Failed to make connection!")
+      (->ClientLogic player in out))))
