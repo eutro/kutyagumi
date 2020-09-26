@@ -5,6 +5,7 @@
   :license {:name "MIT"}
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.java-websocket/Java-WebSocket "1.5.1"]]
+  :uberjar-name "kutyagumi-server-standalone.jar"
   :repl-options {:init-ns server.core}
   :main server.core
   :aot [server.core])
