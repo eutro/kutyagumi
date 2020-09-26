@@ -23,14 +23,31 @@ jobs:
         tools-deps: 1.10.1.693
     - name: Build JS
       run: clojure -A:prod:play-cljc
+
+    - name: Copy Files
+      run: |
+        cp -r resources/public ../out/resources/public
+        cp -r server ../out
+
+    - name: Configure Git
+        run: |
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "Automation"
+
     - name: Build Pages
       run: |
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-        git config user.name "Automation"
-        cp -r resources/public ../out
         git switch gh-pages
+        rm -r *
+        mv ../out/resources/public/* ./
+        git add -u
+        git add -v *
+        git diff --staged --quiet && echo "No changes." || git commit -a -v -m "Build Pages" && git push -v
+
+    - name: Deploy Server
+      run: |
+        git switch server-deploy
         rm -r *
         mv ../out/* ./
         git add -u
         git add -v *
-        git diff --staged --quiet && echo "No changes." || git commit -a -v -m "Build Pages" && git push -v
+        git diff --staged --quiet && echo "No changes." || git commit -a -v -m "Deploy Server" && git push -v
