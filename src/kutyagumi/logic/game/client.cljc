@@ -25,18 +25,16 @@
   ^{:doc
     "Represents a game as seen by a client.
 
-    Note, that the client player is always green."}
+    Note that the client player is always green."}
   ClientLogic
   [player in out]
   GameLogic
-  (update-game [_ game]
-    (async/go-loop []
-      (let [[val port]
-            (async/alts! [in (player/next-move player game)])]
-        (if (= port in)
-          (assoc game :state (parse-state val))
-          (do (async/>! out val)
-              (recur)))))))
+  (update-game [_ {{turn :player} :state
+                   :as game}]
+    (async/go
+      (when (= turn :green)
+        (async/>! out (async/<! (player/next-move player game))))
+      (assoc game :state (parse-state (async/<! in))))))
 
 (defn ->client-logic [player id]
   (async/go

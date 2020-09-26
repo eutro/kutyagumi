@@ -36,8 +36,10 @@
       (fn [_] (resize context)))
     (events/listen
       js/window "click"
-      (fn [event] (async/put! click-chan [(.-clientX event)
-                                          (.-clientY event)])))
+      (fn [event]
+        (async/put! click-chan
+                    [(.-clientX event)
+                     (.-clientY event)])))
     (async/take! (core/init game args) #(game-loop (%)))))
 
 (-main (let [query (-> js/window .-location .-search (.substring 1))]

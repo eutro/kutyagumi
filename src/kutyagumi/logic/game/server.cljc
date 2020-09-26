@@ -102,7 +102,6 @@
                      :state,
                  :as game}]
     (async/go-loop []
-      (println (player this))
       (let [[x y]
             (-> this
                 player
@@ -127,4 +126,7 @@
               :logic (->ServerLogic
                        (async/<! (player/update-state red new-state))
                        (async/<! (player/update-state green new-state)))))
-          (recur))))))
+          (assoc game
+            :logic (->ServerLogic
+                     (async/<! (player/update-state red state))
+                     (async/<! (player/update-state green state)))))))))
