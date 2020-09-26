@@ -2,8 +2,24 @@
   (:require [clojure.core.async :as async]
             [kutyagumi.misc.network :as nw]
             [kutyagumi.logic.player.core :as player]
-            [kutyagumi.logic.game.core #?@(:cljs [:refer [GameLogic]])])
+            [kutyagumi.logic.game.core #?@(:cljs [:refer [GameLogic]])]
+            [kutyagumi.logic.board :as board]
+            [clojure.edn :as edn]
+            [clojure.string :as string]
+            [kutyagumi.logic.game.core :as game])
   #?(:clj (:import (kutyagumi.logic.game.core GameLogic))))
+
+(def readers
+  {'logic/board.LivingCell board/map->LivingCell
+   'logic/board.Wall       board/map->Wall
+   'logic/game.core.State  game/map->State})
+
+(defn parse-state
+  [payload-string]
+  (edn/read-string {:readers readers}
+                   (string/replace payload-string
+                                   #"#kutyagumi\.logic\."
+                                   "#logic/")))
 
 (defrecord
   ^{:doc
@@ -13,11 +29,13 @@
   ClientGame
   [player in out]
   GameLogic
-  (update-game [_ game]
+  (update-game [_ {{next-player :player}
+                       :state
+                   :as game}]
     (async/go
-      (when (= :green player)
-        (async/>! out (async/<! (player/next-move player game))))
-      (assoc game :state (async/<! in)))))
+      (when (= :green next-player)
+        (async/>! out (async/<! (player/next-move player game))) game)
+      (assoc game :state (parse-state (async/<! in))))))
 
 (defn ->client-game [player id]
   (async/go

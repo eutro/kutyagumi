@@ -9,6 +9,7 @@
 (def VERSION "1.0.0")
 
 (defn send-to [^WebSocket socket packet]
+  (print "> ") (prn packet)
   (.send socket (pr-str packet)))
 
 ;; I sure do hope I don't get memory leaks
@@ -85,7 +86,7 @@
                      :message (str "Joining game: " \" id \")})
 
                   (doseq [c [connection host-connection]]
-                    (send-to c (:type :pairing))))))
+                    (send-to c {:type :pairing})))))
       (send-to connection
         {:type    :user-error
          :message (str "Nobody is hosting the game: " \" id \")}))
@@ -93,32 +94,12 @@
       {:type    :error
        :message "No host ID given."})))
 
-(defmethod handle-packet :candidate
-  [connection {:keys [candidate]}]
+(defmethod handle-packet :to-peer
+  [connection {:keys [payload]}]
   (if-let [pair (@pairs connection)]
     (send-to pair
-      {:type :candidate
-       :candidate candidate})
-    (send-to connection
-      {:type :error
-       :message "Not paired with anyone."})))
-
-(defmethod handle-packet :offer
-  [connection {:keys [offer]}]
-  (if-let [pair (@pairs connection)]
-    (send-to pair
-      {:type :offer
-       :offer offer})
-    (send-to connection
-      {:type :error
-       :message "Not paired with anyone."})))
-
-(defmethod handle-packet :answer
-  [connection {:keys [answer]}]
-  (if-let [pair (@pairs connection)]
-    (send-to pair
-      {:type :answer
-       :answer answer})
+      {:type    :from-peer
+       :payload payload})
     (send-to connection
       {:type :error
        :message "Not paired with anyone."})))
@@ -130,6 +111,7 @@
                      (send-to connection
                        {:type    :error
                         :message (str "Malformed EDN: " (.getMessage e))})))]
+    (print "< ") (prn packet)
     (handle-packet connection packet)))
 
 (defn on-close [connection]

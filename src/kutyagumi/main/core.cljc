@@ -5,7 +5,7 @@
             [kutyagumi.logic.game.client :as client]
             [kutyagumi.misc.map-reader :as mr]
             [kutyagumi.logic.player.gui :as gp]
-            [kutyagumi.logic.player.rtc :as rp]
+            [kutyagumi.logic.player.remote :as rp]
             [clojure.core.async :as async]))
 
 (defn init [game args]
@@ -36,7 +36,7 @@
                       "host"
                       (server/->ServerLogic
                         (gp/->GuiPlayer)
-                        (async/<! (rp/->rtc-player id)))
+                        (async/<! (rp/->remote-player id)))
 
                       "join"
                       (async/<! (client/->client-game

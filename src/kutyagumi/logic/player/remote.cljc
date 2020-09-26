@@ -1,10 +1,10 @@
-(ns kutyagumi.logic.player.rtc
+(ns kutyagumi.logic.player.remote
   (:require [kutyagumi.logic.player.core #?@(:cljs [:refer [Player]])]
             [clojure.core.async :as async]
             [kutyagumi.misc.network :as nw])
   #?(:clj (:import (kutyagumi.logic.player.core Player))))
 
-(defrecord RTCPlayer [in out]
+(defrecord RemotePlayer [in out]
   Player
   (next-move [_ _game]
     (async/go (async/<! in)))
@@ -13,7 +13,7 @@
       (async/go (async/>! out state))
       this)))
 
-(defn ->rtc-player [id]
+(defn ->remote-player [id]
   (async/go
     (let [[in out] (async/<! (nw/make-connection :host id))]
-      (->RTCPlayer in out))))
+      (->RemotePlayer in out))))
