@@ -291,11 +291,12 @@
                            (+ rep-y rep-size)
                            font-size)))
         (let [rep-size (* 2 cell-size)
-              font-size (/ rep-size 8)]
+              font-size (/ rep-size 8)
+              padding (/ rep-size 16)]
           (doseq [[rep, total
                    rep-x, rep-y]
-                  [[green-rep green-count 0 0]
-                   [red-rep red-count (- width rep-size) 0]]]
+                  [[green-rep green-count padding padding]
+                   [red-rep red-count (- width rep-size padding) padding]]]
             (-> rep
                 (t/project width height)
                 (t/translate rep-x rep-y)
