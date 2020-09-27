@@ -1,4 +1,4 @@
-(defproject kutyagumi "0.1.0-SNAPSHOT"
+(defproject kutyagumi "1.0.0"
   :repositories [["clojars" {:url "https://clojars.org/repo"
                              :sign-releases false}]]
   :clean-targets ^{:protect false} ["target"]
