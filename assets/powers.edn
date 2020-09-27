@@ -1,3 +1,14 @@
-{:width 8 :height 8
+{:shaders {:fragment
+           {:precision  "mediump float"
+            :uniforms   {u_image sampler2D}
+            :inputs     {v_tex_coord vec2}
+            :outputs    {o_color vec4}
+            :signatures {main ([] void)}
+            :functions  {main ([]
+                               (=vec4 texel (texture u_image v_tex_coord))
+                               ("if" (< (.a texel) 0.5) "discard")
+                               (= o_color texel))}}}
+
+ :width 8 :height 8
  :sprites [[:boost]
            [:teleporter/tile :teleporter/target]]}
