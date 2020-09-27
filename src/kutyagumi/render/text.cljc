@@ -1,8 +1,8 @@
 (ns kutyagumi.render.text
-  (:require [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall]])]
+  (:require [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall Boost]])]
             [kutyagumi.logic.board]
             [kutyagumi.misc.util :as u])
-  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall))))
+  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall Boost))))
 
 (defprotocol TextRenderable
   (render-as-text [this]
@@ -38,7 +38,14 @@
     [(str (if (has-side? :up) "-" " ")
           (if (has-side? :right) "|" " "))
      (str (if (has-side? :left) "|" " ")
-          (if (has-side? :down) "-" " "))]))
+          (if (has-side? :down) "-" " "))])
+
+  Boost
+  (render-as-text [{:keys [other]}]
+    (grid-or
+      (render-as-text other)
+      [["bb"]
+       ["bb"]])))
 
 (defn pad-left
   ([obj n] (pad-left obj n \space))

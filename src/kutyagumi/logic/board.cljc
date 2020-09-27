@@ -16,9 +16,8 @@
 (defrecord LivingCell [owner]
   BoardPart
   (check-placement [_ _ _] false)
-  (can-place-from [{:keys [owner]
-                    {:keys [sides]} :previous}
-                   [x y]
+  (can-place-from [{{:keys [sides]} :previous}
+                   _pos
                    side
                    {:keys [player]}]
     (and (= owner player)
@@ -52,7 +51,7 @@
 
 (defrecord Wall [sides]
   BoardPart
-  (check-placement [_ [x, y] {:keys [player board]
+  (check-placement [_ [x, y] {:keys [board]
                               :as state}]
     (some (fn [[side [dx dy]]]
             (let [cx (+ x dx)
@@ -66,9 +65,19 @@
     (default-place this x y state))
   (can-place-from [_this _pos _side _state] false))
 
+(defrecord Boost [other]
+  BoardPart
+  (check-placement [_ pos state]
+    (check-placement other pos state))
+  (do-placement [_ pos {:keys [player]
+                        :as state}]
+    (assoc (do-placement other pos state)
+      :player player))
+  (can-place-from [_this _pos _side _state] false))
+
 (extend-protocol BoardPart
   nil
-  (check-placement [_ [x y] {:keys [player board]
+  (check-placement [_ [x y] {:keys [board]
                              :as state}]
     (some (fn [[side [dx dy]]]
             (let [cx (+ x dx)

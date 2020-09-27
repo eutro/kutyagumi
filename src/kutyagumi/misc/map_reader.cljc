@@ -7,6 +7,7 @@
 
 (def readers {'board/cell   board/map->LivingCell
               'board/wall   board/map->Wall
+              'board/boost  board/map->Boost
               'board/random rand-nth
               'board/seeded (let [r (rand)] #(nth % (-> % count (* r) long)))})
 

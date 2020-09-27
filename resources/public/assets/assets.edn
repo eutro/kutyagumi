@@ -1,6 +1,1 @@
-[:cells
- :walls
- :terrain
- :guicells
- :popup
- :digits]
+[:cells :walls :terrain :guicells :popup :digits :powers]

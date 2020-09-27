@@ -13,6 +13,7 @@
   {:readers
    {'logic/board.LivingCell board/map->LivingCell
     'logic/board.Wall       board/map->Wall
+    'logic/board.Boost      board/map->Boost
     'logic/game.core.State  game/map->State}})
 
 (defn read-packet
@@ -32,7 +33,7 @@
   (update-game [_ game]
     (async/go-loop []
       (let [{:keys [type]
-             :as packet}
+             :as   packet}
             (read-packet (async/<! in))]
         (case type
           :move (do (async/>! out (async/<! (player/next-move player game)))

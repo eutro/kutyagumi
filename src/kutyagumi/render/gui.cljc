@@ -1,5 +1,5 @@
 (ns kutyagumi.render.gui
-  (:require [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall]])]
+  (:require [kutyagumi.logic.board #?@(:cljs [:refer [LivingCell Wall Boost]])]
             [kutyagumi.misc.util :as u]
             [kutyagumi.misc.platform :as p]
             [clojure.core.async :as async]
@@ -9,7 +9,7 @@
             #?@(:clj  [[play-cljc.macros-java :refer [gl math]]]
                 :cljs [[play-cljc.macros-js :refer-macros [gl math]]
                        [clojure.core.async :refer-macros [go]]]))
-  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall)
+  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall Boost)
                    (org.lwjgl.glfw GLFW))))
 
 (defn init
@@ -151,7 +151,22 @@
       (-> ((keyword "wall" (name side)) sprites)
           pipeline
           (->> (c/render game))))
-    (draw nil board game pipeline x y)))
+    (draw nil board game pipeline x y))
+
+  Boost
+  (draw [{:keys [other]}
+         board
+         {{{{:keys [boost]} :sprites}
+           :powers}
+              ::assets,
+          :as game}
+         pipeline
+         x, y]
+    (draw other board game pipeline x y)
+    (when boost
+      (-> boost
+          pipeline
+          (->> (c/render game))))))
 
 (defn padded [n]
   (* n 1.1))
