@@ -7,6 +7,30 @@ A two-player game about cells and taking over the world!
 The web version of the game is available to play [here](https://eutropius225.github.io/kutyagumi/index.html),
 or you can [build it yourself](#building)!
 
+You can also play **online** multiplayer:
+
+#### Web
+
+To host a game, add `?host=<game-id>` to the end of the URL.
+
+To join a game, add `?join=<game-id>` to the end of the URL.
+
+`<game-id>` can be anything that doesn't contain `?` or `&`.
+
+For example, to play with a friend, pick a suitable game ID. `eutro`
+will be used in this example.
+
+1. Navigate to `https://eutropius225.github.io/kutyagumi/index.html?host=eutro`
+2. Tell your friend to go to `https://eutropius225.github.io/kutyagumi/index.html?join=eutro`
+
+To rematch, the host needs to refresh first, then the other party can do the same to join.
+
+#### Jar
+
+To host a game, run with the arguments `host <game-id>`.
+
+To join a game, run with the arguments `join <game-id>`.
+
 ## How to play
 
 ### Overview
