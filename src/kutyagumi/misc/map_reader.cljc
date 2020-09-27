@@ -5,26 +5,16 @@
             [kutyagumi.logic.board :as board]
             [kutyagumi.misc.util :as u]))
 
-(def readers {'board/cell   board/map->LivingCell
-              'board/wall   board/map->Wall
-              'board/boost  board/map->Boost
-              'board/random rand-nth
-              'board/seeded (let [r (rand)] #(nth % (-> % count (* r) long)))})
-
-(defn read-board
-  "Read a board from an EDN string.
-
-  Readers:
-  #board/cell: map->LivingCell
-  #board/wall: map->Wall
-  #board/random: rand-nth"
-  [text]
-  (-> {:readers readers} (edn/read-string text) u/transpose))
+(def readers {'board/cell  board/map->LivingCell
+              'board/wall  board/map->Wall
+              'board/boost board/map->Boost
+              'rand/nth    rand-nth})
 
 (defn read-file
-  "Read a board from a file. See read-board"
+  "Read a board from a file."
   [fname]
-  (async/go (-> (p/get-edn fname {:readers readers}) async/<! u/transpose)))
+  (async/go (-> (p/get-edn fname {:readers readers}) async/<!
+                u/transpose)))
 
 (defn pick-board []
   (async/go (-> "boards/boards.edn" p/get-edn async/<!
