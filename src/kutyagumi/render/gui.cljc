@@ -9,8 +9,7 @@
             #?@(:clj  [[play-cljc.macros-java :refer [gl math]]]
                 :cljs [[play-cljc.macros-js :refer-macros [gl math]]
                        [clojure.core.async :refer-macros [go]]]))
-  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall Boost)
-                   (org.lwjgl.glfw GLFW))))
+  #?(:clj (:import (kutyagumi.logic.board LivingCell Wall Boost))))
 
 (defn init
   "Yields a channel that returns a
