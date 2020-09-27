@@ -15,7 +15,7 @@
   to retrieve the new game."
   [old-game args]
   (async/go
-    (let [opts (apply assoc {} args)
+    (let [opts (if (seq args) (apply assoc {} args) {})
           state (game/->State
                   (async/<! (mr/pick-board))
                   :red)
