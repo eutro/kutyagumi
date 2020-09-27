@@ -2,4 +2,5 @@
  :walls
  :terrain
  :guicells
- :popup]
+ :popup
+ :digits]
