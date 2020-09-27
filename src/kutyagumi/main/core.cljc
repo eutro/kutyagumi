@@ -13,12 +13,9 @@
   "Yields a channel that returns a
   function to run on the main thread
   to retrieve the new game."
-  [old-game args]
+  [old-game {:as opts}]
   (async/go
-    (assert (even? (count args))
-            "Argument count must be even!")
-    (let [opts (apply assoc {} args)
-          state (game/->State
+    (let [state (game/->State
                   (async/<! (mr/pick-board))
                   :red)
           new-game

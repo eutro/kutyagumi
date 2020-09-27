@@ -16,11 +16,11 @@
 
 (defmethod task "native"
   [_]
-  (gui/-main (next *command-line-args*)))
+  (apply gui/-main (next *command-line-args*)))
 
 (defmethod task "nogui"
   [_]
-  (nogui/-main))
+  (apply nogui/-main (next *command-line-args*)))
 
 (defmethod task "repl"
   [_]

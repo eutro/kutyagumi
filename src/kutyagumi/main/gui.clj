@@ -1,8 +1,10 @@
 (ns kutyagumi.main.gui
   (:require [kutyagumi.main.core :as core]
             [clojure.core.async :as async]
-            [play-cljc.gl.core :as pc])
+            [play-cljc.gl.core :as pc]
+            [kutyagumi.misc.platform :as platform])
   (:import (org.lwjgl.glfw GLFW
+                           GLFWImage
                            Callbacks
                            GLFWWindowCloseCallbackI
                            GLFWMouseButtonCallbackI
@@ -51,7 +53,14 @@
       (GLFW/glfwSetCursorPosCallback
         (reify GLFWCursorPosCallbackI
           (invoke [_ _ x y]
-            (reset! mouse-pos [x y])))))
+            (reset! mouse-pos [x y]))))
+      (GLFW/glfwSetWindowIcon
+        (let [{:keys [data width height]}
+              (async/<!! (platform/get-image "icon.png"))
+              image (GLFWImage/malloc)]
+          (.set image width height data)
+          (doto (GLFWImage/malloc 1)
+            (.put 0 image)))))
     (loop [{last-time :total-time
             :as       game} game]
       (when-not (GLFW/glfwWindowShouldClose handle)
@@ -67,7 +76,7 @@
     (GLFW/glfwDestroyWindow handle)
     (GLFW/glfwTerminate)))
 
-(defn -main [args]
+(defn -main [& args]
   (let [{:keys [handle] :as window} (->window)]
     (start (pc/->game handle) window args)))
 
