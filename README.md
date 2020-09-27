@@ -5,7 +5,11 @@ A two-player game about cells and taking over the world!
 ## Where to play
 
 The web version of the game is available to play [here](https://eutropius225.github.io/kutyagumi/index.html),
-or you can [build it yourself](#building)!
+or on [itch.io](https://eutro.itch.io/kutyagumi) (v1.0.0).
+
+A native Java version is available [here](https://github.com/eutropius225/kutyagumi/releases/tag/v1.0.0).
+
+You can also [build it yourself](#building)!
 
 ## Online Multiplayer
 
