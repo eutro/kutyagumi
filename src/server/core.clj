@@ -6,7 +6,7 @@
            (org.java_websocket WebSocket WebSocketImpl)))
 
 ;; to match the game's protocol version
-(def VERSION "1.0.0")
+(def VERSION "1.1.0")
 (def LOG_PACKETS false)
 
 (defn send-to [^WebSocket socket packet]
@@ -105,6 +105,11 @@
       {:type    :error
        :message "Not paired with anyone."})))
 
+(defmethod handle-packet :pulse
+  [_connection _packet]
+  ;; NOOP
+  )
+
 (defn on-message [connection message]
   (when-some [packet
               (try (edn/read-string message)
@@ -142,5 +147,8 @@
           (onStart []))]
     (.start server)
     (println "Started server on port:" port)
-    ;; await EOF
-    (while (not= -1 (.read System/in)))))
+    (while true
+      ;; send a pulse every 10 seconds so the connection doesn't get marked as idle
+      ;; clients are expected to pulse back
+      (Thread/sleep 10000)
+      (.broadcast server (pr-str {:type :pulse})))))
