@@ -3,7 +3,6 @@
             [kutyagumi.misc.util :as u]
             [kutyagumi.misc.platform :as p]
             [clojure.core.async :as async]
-            [clojure.string :as string]
             [play-cljc.gl.core :as c]
             [play-cljc.gl.entities-2d :as e]
             [play-cljc.transforms :as t]
@@ -173,7 +172,17 @@
      [(/ (- width (* board-width shrunk)) 2)
       (/ (- height (* board-height shrunk)) 2)]]))
 
-(defn render [{{:keys [board player winner]}
+(def log2
+  (let [ln2 (Math/log 2)]
+    (fn [n]
+      (/ (Math/log n)
+         ln2))))
+
+(defn clamp [mn n mx]
+  (max mn (min n mx)))
+
+(defn render [{{:keys [board player over?]
+                [red-count green-count] :counts}
                    :state,
                :as game}]
   (let [width (max 1 (p/get-width game))
@@ -199,6 +208,44 @@
                                 (seven-eighths y)))
               x, y)))
 
-    (when winner
-      ;; TODO make this a proper display
-      #?(:cljs (js/alert (str (string/capitalize (name winner)) " victory!"))))))
+    (when over?
+      (gl game "disable"
+          (gl game "DEPTH_TEST"))
+      (let [{{:keys [sprites]} :popup}
+            (::assets game)
+            portion 2.5
+            w (/ width portion)
+            h (/ w 2)
+            y-off (/ (- height h) 2)
+            x-off (/ (- width w) 2)
+            winner (if (> red-count green-count)
+                    :red
+                    ;; green came second, so wins in a tie
+                    :green)]
+        (-> (winner sprites)
+            (t/project width height)
+            (t/translate x-off y-off)
+            (t/scale w h)
+            (->> (c/render game))))
+      (let [{{:keys [sprites]} :guicells}
+            (::assets game)
+            get-sprite
+            (fn [this other offset]
+              (sprites
+                (+ (let [n (Math/round (clamp -2 (log2 (/ this other)) 2))]
+                     (if (zero? n) 1 n))
+                   offset)))
+
+            portion 8
+            size (/ width portion)
+            y-off (/ (- height size) 2 size)]
+        (doseq [[entity x-off]
+                [[(get-sprite green-count red-count -3) (- (/ portion 2) 1.5)]
+                 [(get-sprite red-count green-count 3) (+ (/ portion 2) 0.5)]]]
+          (-> entity
+              (t/project width height)
+              (t/scale size size)
+              (t/translate x-off y-off)
+              (->> (c/render game)))))
+      (gl game "enable"
+          (gl game "DEPTH_TEST")))))
