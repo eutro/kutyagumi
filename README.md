@@ -7,7 +7,7 @@ A two-player game about cells and taking over the world!
 The web version of the game is available to play [here](https://eutropius225.github.io/kutyagumi/index.html),
 or you can [build it yourself](#building)!
 
-You can also play **online** multiplayer:
+## Online Multiplayer
 
 #### Web
 
@@ -49,7 +49,36 @@ To place a cell, click a suitable place on the board when it is your turn.
 
 ![](resources/showcase/place_red.gif)
 
-_Note that the background colour reflects whose turn it is._ 
+_Note that the background colour reflects whose turn it is._
+
+When an area can only be reached by one player, for example if it is closed off,
+it will automatically be claimed by that player.
+
+![](resources/showcase/closing_off.gif)
+
+### Pieces
+
+#### Cells
+
+Cells are your pieces. Have more of them than your opponent to win.
+
+![](resources/showcase/cells.gif)
+
+_Running totals are shown in the top left and right corners:_
+
+![](resources/showcase/green_total.png) ![](resources/showcase/red_total.png)
+
+#### Walls
+
+Walls are solid things that cannot be placed through.
+
+![](resources/showcase/wall.gif)
+
+#### Boosters
+
+Boosters let you place again after you place a cell on them.
+
+![](resources/showcase/booster.gif)
 
 ## Building
 
