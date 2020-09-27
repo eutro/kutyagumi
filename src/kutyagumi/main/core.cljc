@@ -13,29 +13,30 @@
   "Yields a channel that returns a
   function to run on the main thread
   to retrieve the new game."
-  [old-game {:as opts}]
+  [old-game args]
   (async/go
-    (let [state (game/->State
+    (let [opts (apply assoc {} args)
+          state (game/->State
                   (async/<! (mr/pick-board))
                   :red)
           new-game
           (game/->Game
             state
             (cond
-              (get opts "host")
+              (opts "host")
               (server/->ServerLogic
                 (gp/->GuiPlayer)
                 (async/<! (rp/->remote-player
-                            (get opts "host")
+                            (opts "host")
                             state
-                            (or (get opts "server")
+                            (or (opts "server")
                                 (async/<! (platform/get-edn "config/server.edn"))))))
 
-              (get opts "join")
+              (opts "join")
               (async/<! (client/->client-logic
                           (gp/->GuiPlayer)
-                          (get opts "join")
-                          (or (get opts "server")
+                          (opts "join")
+                          (or (opts "server")
                               (async/<! (platform/get-edn "config/server.edn")))))
 
               :else
