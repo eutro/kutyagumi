@@ -264,7 +264,8 @@
               rep-size (/ width rep-portion)
               rep-y (/ (- height rep-size) 2)
 
-              font-size (/ rep-size 8)]
+              font-size (/ rep-size 8)
+              padding (/ rep-size 16)]
 
           (-> (winner sprites)
               (t/project width height)
@@ -288,7 +289,7 @@
                                     (* font-size
                                        (count (str total))))
                                  2))
-                           (+ rep-y rep-size)
+                           (+ rep-y rep-size padding)
                            font-size)))
         (let [rep-size (* 2 cell-size)
               font-size (/ rep-size 8)
@@ -310,7 +311,7 @@
                                     (* font-size
                                        (count (str total))))
                                  2))
-                           (+ rep-y rep-size)
+                           (+ rep-y rep-size padding)
                            font-size)))))
     (gl game "enable"
         (gl game "DEPTH_TEST"))))
