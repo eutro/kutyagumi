@@ -4,100 +4,100 @@
   nil nil nil nil nil nil]
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
-  #board/wall {:sides #{#board/random [:up :right :left :down]}} #board/wall {:sides #{#board/random [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
+  #board/wall {:sides #{#rand/nth [:up :right :left :down]}} #board/wall {:sides #{#rand/nth [:up :right :left :down]}}
   nil]
  [nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
  [nil nil nil nil nil nil
