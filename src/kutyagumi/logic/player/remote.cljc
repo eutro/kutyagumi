@@ -20,8 +20,7 @@
 
 (defn ->remote-player [id state uri]
   (async/go
-    (let [[in out] (async/<! (nw/make-connection uri :host id))]
-      (assert (and in out) "Failed to make connection!")
+    (let [[in out] (nw/make-connection uri :host id)]
       (async/>! out {:type  :sync
                      :state state})
       (->RemotePlayer in out))))

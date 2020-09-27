@@ -42,6 +42,5 @@
 
 (defn ->client-logic [player id uri]
   (async/go
-    (let [[in out] (async/<! (nw/make-connection uri :join id))]
-      (assert (and in out) "Failed to make connection!")
+    (let [[in out] (nw/make-connection uri :join id)]
       (->ClientLogic player in out))))
