@@ -1,3 +1,5 @@
 [:cells
  :walls
- :terrain]
+ :terrain
+ :guicells
+ :popup]
