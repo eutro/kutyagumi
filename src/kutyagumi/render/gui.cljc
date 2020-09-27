@@ -75,7 +75,28 @@
   (draw [this board game
          pipeline
          x, y]
-    "Render this element at (x, y)."))
+    "Render this element at (x, y).
+
+    Return a seq of batch-entity pairs."))
+
+(defmulti invalidate?
+  "Get whether the batch should be invalidated."
+  (fn [& args] (first args)))
+
+(defmethod invalidate? :default ([& _] false))
+
+(let [last-time (atom 0)]
+  (defmethod invalidate? :cell
+    ([_ {:keys [total-time]
+         {{{:keys [fps]}
+           :meta}
+          :cells}
+               ::assets}]
+     (when (> total-time
+              (+ @last-time
+                 (/ fps)))
+       (reset! last-time total-time)
+       true))))
 
 (def color->background
   {:red   [(/ 224 255)
@@ -97,13 +118,12 @@
          {{{{blank-sprite :blank}
             :sprites}
            :terrain}
-              ::assets,
-          :as game}
+          ::assets}
          pipeline
          _x, _y]
-    (-> blank-sprite
-        pipeline
-        (->> (c/render game))))
+    [[:static
+      (-> blank-sprite
+          pipeline)]])
 
   LivingCell
   (draw [{:keys [owner, previous]}
@@ -130,13 +150,12 @@
           sprite ((keyword (name owner)
                            (name sprite-sym))
                   sprites)]
-      (when sprite
-        (-> sprite
-            pipeline
-            (t/translate 0.125 0.125)
-            (t/scale 0.75 0.75)
-            (->> (c/render game)))))
-    (draw previous board game pipeline x y))
+      (conj (draw previous board game pipeline x y)
+            [:cell
+             (-> sprite
+                 pipeline
+                 (t/translate 0.125 0.125)
+                 (t/scale 0.75 0.75))])))
 
   Wall
   (draw [{:keys [sides]}
@@ -147,11 +166,11 @@
           :as game}
          pipeline
          x, y]
-    (doseq [side sides]
-      (-> ((keyword "wall" (name side)) sprites)
-          pipeline
-          (->> (c/render game))))
-    (draw nil board game pipeline x y))
+    (concat (draw nil board game pipeline x y)
+            (for [side sides]
+              [:static
+               (-> ((keyword "wall" (name side)) sprites)
+                   pipeline)])))
 
   Boost
   (draw [{:keys [other]}
@@ -162,11 +181,10 @@
           :as game}
          pipeline
          x, y]
-    (draw other board game pipeline x y)
-    (when boost
-      (-> boost
-          pipeline
-          (->> (c/render game))))))
+    (conj (draw other board game pipeline x y)
+          [:static
+           (-> boost
+               pipeline)])))
 
 (defn padded [n]
   (* n 1.1))
@@ -218,6 +236,20 @@
             (t/scale char-width char-height)
             (->> (c/render game)))))))
 
+(def render-cache* (atom {}))
+
+(defn recalculate-cache
+  [force? check-hash func]
+  (let [{:keys [hashed val]} @render-cache*]
+    (if (or (force? val)
+            (not= hashed check-hash))
+      (let [ret (func)]
+        (reset! render-cache*
+                {:hashed check-hash
+                 :val    ret})
+        ret)
+      val)))
+
 (defn render [{{:keys [board player over?]}
                    :state,
                :as game}]
@@ -237,17 +269,32 @@
                :clear    {:color (color->background player)
                           :depth 1}})
 
-    (doseq [x (-> board count range)
-            y (-> board first count range)]
-      (draw (u/nd-nth board x y)
-            board, game
-            #(-> %
-                 (t/project width height)
-                 (t/translate offset-x offset-y)
-                 (t/scale cell-size cell-size)
-                 (t/translate (seven-eighths x)
-                              (seven-eighths y)))
-            x, y))
+    (let [batches
+          (recalculate-cache
+            (fn [val] (some (fn [[batch _]] (invalidate? batch game)) val))
+            (hash [board])
+            (fn []
+              (reduce
+                (fn [batches [k v]]
+                  (update batches k
+                          conj v))
+                {}
+                (apply
+                  concat
+                  (for [x (-> board count range)
+                        y (-> board first count range)]
+                    (draw (u/nd-nth board x y)
+                          board, game
+                          #(-> %
+                               (t/project width height)
+                               (t/translate offset-x offset-y)
+                               (t/scale cell-size cell-size)
+                               (t/translate (seven-eighths x)
+                                            (seven-eighths y)))
+                          x, y))))))]
+      (doseq [[_batch entities] batches]
+        (doseq [entity entities]
+          (c/render game entity))))
 
     (gl game "disable"
         (gl game "DEPTH_TEST"))
