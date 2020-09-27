@@ -41,3 +41,14 @@
 (defn transpose [m]
   "Transpose a 2D matrix."
   (when (seq m) (apply mapv vector m)))
+
+(defn zip
+  "Similar to transpose."
+  [& colls]
+  (apply map vector colls))
+
+(defn count-cells
+  "Count the cells owned by this player."
+  [board owner]
+  (count (filter #(= (:owner %) owner)
+                 (flatten board))))

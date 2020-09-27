@@ -54,8 +54,8 @@
   in order to determine whether there is a winner.
 
   Returns:
-  [false, [red-count green-count], board] - if there is no winner
-  [true, [red-count green-count], board] - if there is a winner"
+  [false, board] - if there is no winner
+  [true, board] - if there is a winner"
   [board]
   (let [green-fill (flood-fill-player board :green)
         red-fill (flood-fill-player board :red)
@@ -87,11 +87,6 @@
                 board
                 captured)]
     [(empty? contested)
-     (let [count-cells
-           (fn [owner board]
-             (count (filter #(= (:owner %) owner)
-                            (flatten board))))]
-       [(count-cells :red red-fill) (count-cells :green green-fill)])
      new-board]))
 
 (defrecord ServerLogic
@@ -120,11 +115,10 @@
                                     [x, y]
                                     state)
 
-                [over? counts new-board] (check-victory board)
+                [over? new-board] (check-victory board)
                 new-state (assoc new-state
                             :board new-board
-                            :over? over?
-                            :counts counts)]
+                            :over? over?)]
             (assoc game
               :state new-state
               :logic (->ServerLogic

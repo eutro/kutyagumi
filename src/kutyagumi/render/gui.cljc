@@ -166,7 +166,9 @@
         board-width (-> board count)
         board-height (-> board first count)
         shrunk (min (/ height (padded board-height))
-                    (/ width (padded board-width)))
+                    (/ width (padded (+ board-width
+                                        ;; for the score display
+                                        4))))
         cell-size (long (* shrunk (/ 8 7)))]
     [cell-size
      [(/ (- width (* board-width shrunk)) 2)
@@ -181,12 +183,37 @@
 (defn clamp [mn n mx]
   (max mn (min n mx)))
 
-(defn render [{{:keys [board player over?]
-                [red-count green-count] :counts}
+(defn render-number
+  "Actually only numbers but hey."
+  [{{{c->entity    :sprites
+      {sw :width
+       sh :height} :meta}
+     :digits} ::assets
+    :as       game}
+   game-width, game-height
+   number
+   x, y
+   char-width]
+  (let [char-height (* char-width (/ sh sw))]
+    (doseq [[c i] (u/zip (str number) (range))]
+      (when-some [entity (c->entity c)]
+        (-> entity
+            (t/project game-width game-height)
+            (t/translate (+ x (* char-width i)) y)
+            (t/scale char-width char-height)
+            (->> (c/render game)))))))
+
+(defn render [{{:keys [board player over?]}
                    :state,
                :as game}]
   (let [width (max 1 (p/get-width game))
-        height (max 1 (p/get-height game))]
+        height (max 1 (p/get-height game))
+
+        red-count (u/count-cells board :red)
+        green-count (u/count-cells board :green)
+
+        [cell-size [offset-x offset-y]]
+        (get-position-info game)]
     (c/render game
               {:viewport {:x      0
                           :y      0
@@ -195,57 +222,94 @@
                :clear    {:color (color->background player)
                           :depth 1}})
 
-    (let [[cell-size [offset-x offset-y]] (get-position-info game)]
-      (doseq [x (-> board count range)
-              y (-> board first count range)]
-        (draw (u/nd-nth board x y)
-              board, game
-              #(-> %
-                   (t/project width height)
-                   (t/translate offset-x offset-y)
-                   (t/scale cell-size cell-size)
-                   (t/translate (seven-eighths x)
-                                (seven-eighths y)))
-              x, y)))
+    (doseq [x (-> board count range)
+            y (-> board first count range)]
+      (draw (u/nd-nth board x y)
+            board, game
+            #(-> %
+                 (t/project width height)
+                 (t/translate offset-x offset-y)
+                 (t/scale cell-size cell-size)
+                 (t/translate (seven-eighths x)
+                              (seven-eighths y)))
+            x, y))
 
-    (when over?
-      (gl game "disable"
-          (gl game "DEPTH_TEST"))
-      (let [{{:keys [sprites]} :popup}
-            (::assets game)
-            portion 2.5
-            w (/ width portion)
-            h (/ w 2)
-            y-off (/ (- height h) 2)
-            x-off (/ (- width w) 2)
-            winner (if (> red-count green-count)
-                    :red
-                    ;; green came second, so wins in a tie
-                    :green)]
-        (-> (winner sprites)
-            (t/project width height)
-            (t/translate x-off y-off)
-            (t/scale w h)
-            (->> (c/render game))))
-      (let [{{:keys [sprites]} :guicells}
-            (::assets game)
-            get-sprite
-            (fn [this other offset]
-              (sprites
-                (+ (let [n (Math/round (clamp -2 (log2 (/ this other)) 2))]
-                     (if (zero? n) 1 n))
-                   offset)))
+    (gl game "disable"
+        (gl game "DEPTH_TEST"))
+    (let [{{:keys [sprites]} :guicells}
+          (::assets game)
+          get-sprite
+          (fn [this other offset]
+            (sprites
+              (+ (let [n (Math/round (clamp -2 (log2 (/ this other)) 2))]
+                   (if (zero? n) 1 n))
+                 offset)))
 
-            portion 8
-            size (/ width portion)
-            y-off (/ (- height size) 2 size)]
-        (doseq [[entity x-off]
-                [[(get-sprite green-count red-count -3) (- (/ portion 2) 1.5)]
-                 [(get-sprite red-count green-count 3) (+ (/ portion 2) 0.5)]]]
-          (-> entity
+          green-rep (get-sprite green-count red-count -3)
+          red-rep (get-sprite red-count green-count 3)]
+      (if over?
+        (let [{{:keys [sprites]} :popup}
+              (::assets game)
+              popup-portion 2.5
+              popup-width (/ width popup-portion)
+              popup-height (/ popup-width 2)
+              popup-y (/ (- height popup-height) 2)
+              popup-x (/ (- width popup-width) 2)
+              winner (if (> red-count green-count)
+                       :red
+                       ;; green came second, so wins in a tie
+                       :green)
+
+              rep-portion 8
+              rep-size (/ width rep-portion)
+              rep-y (/ (- height rep-size) 2)
+
+              font-size (/ rep-size 8)]
+
+          (-> (winner sprites)
               (t/project width height)
-              (t/scale size size)
-              (t/translate x-off y-off)
-              (->> (c/render game)))))
-      (gl game "enable"
-          (gl game "DEPTH_TEST")))))
+              (t/translate popup-x popup-y)
+              (t/scale popup-width popup-height)
+              (->> (c/render game)))
+
+          (doseq [[entity rep-x total]
+                  [[green-rep (- (/ width 2) (* rep-size 1.5)) green-count]
+                   [red-rep (+ (/ width 2) (* rep-size 0.5)) red-count]]]
+            (-> entity
+                (t/project width height)
+                (t/translate rep-x rep-y)
+                (t/scale rep-size rep-size)
+                (->> (c/render game)))
+            (render-number game
+                           width height
+                           total
+                           (+ rep-x
+                              (/ (- rep-size
+                                    (* font-size
+                                       (count (str total))))
+                                 2))
+                           (+ rep-y rep-size)
+                           font-size)))
+        (let [rep-size (* 2 cell-size)
+              font-size (/ rep-size 8)]
+          (doseq [[rep, total
+                   rep-x, rep-y]
+                  [[green-rep green-count 0 0]
+                   [red-rep red-count (- width rep-size) 0]]]
+            (-> rep
+                (t/project width height)
+                (t/translate rep-x rep-y)
+                (t/scale rep-size rep-size)
+                (->> (c/render game)))
+            (render-number game
+                           width height
+                           total
+                           (+ rep-x
+                              (/ (- rep-size
+                                    (* font-size
+                                       (count (str total))))
+                                 2))
+                           (+ rep-y rep-size)
+                           font-size)))))
+    (gl game "enable"
+        (gl game "DEPTH_TEST"))))
